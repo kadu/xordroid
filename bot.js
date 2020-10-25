@@ -56,69 +56,6 @@ function parse_commands(raw_commands, username) {
 	if(raw_commands[0] === "!comandos") {
 		client.say(client.channels[0], '!led help | !eu | !camera help | !matrix <mensagem>');
 	}
-
-	// if(raw_commands[0] === "!camera") {
-	// 	if(raw_commands[1] === "ajuda") {
-	// 		client.say(client.channels[0], "!camera protoboard | !camera webcam | !camera tela");
-	// 	}
-	// 	if(raw_commands[1] === "help") {
-	// 		client.say(client.channels[0], "!camera protoboard | !camera webcam | !camera screen");
-	// 	}
-
-	// 	if((raw_commands[1] === "protoboard") || (raw_commands[1] === "proto")) {
-	// 		changeScene("proto");
-	// 	}
-
-	// 	if(raw_commands[1] === "webcam") {
-	// 		changeScene("webcam");
-	// 	}
-
-	// 	if((raw_commands[1] === "tela") || (raw_commands[1] === "screen")) {
-	// 		changeScene("tela");
-	// 	}
-	// }
-
-
-	if(raw_commands[0] === "!led") {
-		if(raw_commands[1] === "ajuda") {
-			client.say(client.channels[0], "!led liga | !led desliga | !led cor #RRGGBB | !led efeito [0-101]");
-		}
-
-		if(raw_commands[1] === "help") {
-			client.say(client.channels[0], "!led on | !led off | !led color #RRGGBB | !led effect [0-101]");
-		}
-
-		if((raw_commands[1] === "liga") || (raw_commands[1] === "on")) {
-			mqtt.publish("wled/158690", "ON");
-		}
-
-		if((raw_commands[1] === "desliga") || (raw_commands[1] === "off")) {
-			mqtt.publish("wled/158690", "OFF");
-		}
-
-		if((raw_commands[1] === "efeito") || (raw_commands[1] === "effect")) {
-			let value = parseInt(raw_commands[2]);
-			if(isNaN(value)) {
-				// error
-			} else {
-				if(value >= 0 && value <= 101) {
-					mqtt.publish("wled/158690/api", "FX=" + raw_commands[2] + "&SN=1");
-				}
-			}
-		}
-
-		if((raw_commands[1] === "cor")||(raw_commands[1] === "color")) {
-			let isColor = /^#[0-9A-F]{6}$/i.test(raw_commands[2]);
-
-			if(!isColor) {
-				if(raw_commands[1] === "cor")	client.say(client.channels[0], `@${username} Cara, manda a cor assim => #RRGGBB`);
-				if(raw_commands[1] === "color")	client.say(client.channels[0], `@${username} Dude, send color like this => #RRGGBB`);
-
-			} else {
-				mqtt.publish("wled/158690/col", raw_commands[2]);
-			}
-		}
-	}
 }
 
 client.on("join", (channel, username, self) => {
