@@ -15,15 +15,15 @@ exports.default = (client, obs, mqtt) => {
           //const saveScene = currentScene;
           //changeScene("webcam");
           changeScenes.change(client, obs, mqtt, "webcam");
-          // try {
-          //   setTimeout(()=> {
-          //     mqtt.publish("wled/158690", "OFF");
-          //     //changeScene(saveScene);
-          //     changeScenes.change(client, obs, mqtt, saveScene);
-          //   },10000);
-          // } catch (error) {
-          //   console.log("Erro no settimeout", error);
-          // }
+          try {
+            setTimeout(()=> {
+              mqtt.publish("wled/158690", "OFF");
+              //changeScene(saveScene);
+              //changeScenes.change(client, obs, mqtt, saveScene);
+            },10000);
+          } catch (error) {
+            console.log("Erro no settimeout", error);
+          }
         }
       }
   });
