@@ -29,12 +29,6 @@ exports.default = (client, obs, mqtt) => {
             console.log("Erro no settimeout", error);
           }
         }
-        if(message.substring(0,28) == "just raided the channel with") {
-          console.log("DENTRO");
-          mqtt.publish("wled/158690", "ON");
-          mqtt.publish("wled/158690/api", "FX=66&SN=1");
-          client.say(client.channels[0], `Valeu pela RAID, Sejam todos bem vindos, vou até ascender uma fogueira maneira pra gente curtir juntos \o/`);
-        }
       }
   });
 };
