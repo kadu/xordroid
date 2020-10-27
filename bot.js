@@ -99,10 +99,4 @@ readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
   .forEach((file) => {
 		require(`./commands/${file}`).default(client, obs, mqtt);
-
-		// client.on('message', (target, context, message, isBot) => {
-    //   if (isBot) return;
-    //   require(`./commands/${file}`).default(client, target, context, message, mqtt, obs);
-		// });
-
 	});
