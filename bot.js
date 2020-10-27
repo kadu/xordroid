@@ -72,25 +72,6 @@ client.on('message', (channel, tags, message, self) => {
 		parse_commands(message_parse, tags.username);
 		return;
 	}
-
-	// if(tags.username == "streamlabs") {
-	// 	var sendedBy = message.substring(24, message.length-1);
-	// 	if(message.substring(0,23) == "Thank you for following") {
-	// 		client.say(channel, `Valeu @${sendedBy} pelo follow, vou até soltar uns rojões!`);
-	// 		mqtt.publish("wled/158690", "ON");
-	// 		mqtt.publish("wled/158690/api", "FX=90&SN=1");
-	// 		const saveScene = currentScene;
-	// 		changeScene("webcam");
-	// 		try {
-	// 			setTimeout(()=> {
-	// 				mqtt.publish("wled/158690", "OFF");
-	// 				changeScene(saveScene);
-	// 			},10000);
-	// 		} catch (error) {
-	// 			console.log("Erro no settimeout", error);
-	// 		}
-	// 	}
-	// }
 });
 
 client.connect();
