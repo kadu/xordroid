@@ -17,6 +17,7 @@ exports.default = (client, obs, mqtt) => {
           client.say(client.channels[0], `Valeu @${sendedBy} pelo follow, vou até soltar uns rojões!`);
           mqtt.publish("wled/158690", "ON");
           mqtt.publish("wled/158690/api", "FX=90&SN=1");
+          mqtt.publish("xordroid/weather/message", `Valeu ae @${sendedBy}`);
           changeScenes.change(client, obs, mqtt, "webcam");
           try {
             setTimeout(()=> {
