@@ -57,7 +57,6 @@ let obsIsConnected;
 
 module.exports = {
   default: function (client, obs, mqtt) {
-
     obs.on('SwitchScenes', data => {
       currentScene = data.sceneName;
     });
@@ -73,6 +72,10 @@ module.exports = {
           console.log("Algo aconteceu aqui!");
         });
     });
+  },
+
+  getCurrentScene: function() {
+    return currentScene;
   },
 
   change: function (client, obs, mqtt, scene) {

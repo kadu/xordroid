@@ -23,6 +23,11 @@ exports.default = (client, obs) => {
     currentScene = data.sceneName;
   });
 
+  obs.on("ConnectionClosed", (data) => {
+    obsIsConnected = false;
+    setTimeout(obsConnection,60000);
+  });
+
   obs.on("ConnectionOpened", (data) => {
     obsIsConnected = true;
     obs.send('GetCurrentScene')
