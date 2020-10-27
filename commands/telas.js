@@ -1,4 +1,4 @@
-exports.default = (client, obs) => {
+exports.default = (client, obs, mqtt) => {
   let currentScene;
   let obsIsConnected;
 
@@ -16,6 +16,8 @@ exports.default = (client, obs) => {
   }
 
   client.on('connected', (address, port) => {
+    mqtt.publish("xordroid/weather/on", "");
+    mqtt.publish("wled/158690", "ON");
     obsConnection();
   });
 
@@ -25,6 +27,8 @@ exports.default = (client, obs) => {
 
   obs.on("ConnectionClosed", (data) => {
     obsIsConnected = false;
+    mqtt.publish("xordroid/weather/off", "");
+    mqtt.publish("wled/158690", "OFF");
     setTimeout(obsConnection,60000);
   });
 
