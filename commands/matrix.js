@@ -6,7 +6,7 @@ exports.default = (client, obs, mqtt) => {
     switch (parsedMessage[0]) {
       case '!matrix':
         let fullMessage = message.replace("!matrix ","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-        mqtt.publish("xordroid/weather/message", fullMessage);
+        mqtt.publish("xordroid/message", fullMessage);
         break;
       default:
         break;
