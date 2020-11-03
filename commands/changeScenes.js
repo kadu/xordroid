@@ -39,26 +39,24 @@ module.exports = {
     }
 
     let newScene;
-
-    if(scene == "proto") {
+    if(scene == "proto" || scene == "Esquerda + Protobord") {
       newScene = "Esquerda + Protobord";
     }
 
-    if(scene == "webcam") {
+    if(scene == "webcam" || scene == "FullScreen") {
       newScene = "FullScreen";
     }
 
-    if(scene == "tela") {
+    if(scene == "tela" || scene == "Esquerda + Webcam" ) {
       newScene = "Esquerda + Webcam";
     }
 
-    try {
-      obs.send('SetCurrentScene', {
-        'scene-name': newScene
-      });
-    } catch (error) {
+    obs.send('SetCurrentScene', {
+      'scene-name': newScene
+    }).catch(error => {
       console.log("erro no setcurrentschene", error);
-    }
+    });
+
   }
 
 }
