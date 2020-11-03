@@ -11,7 +11,7 @@ exports.default = (client, obs, mqtt) => {
     client.say(thing.client.channels[0], chat_message);
     mqtt.publish("wled/158690", "ON");
     mqtt.publish("wled/158690/api", `FX=${effect}&SN=1`);
-    mqtt.publish("xordroid/weather/message", led_message);
+    mqtt.publish("xordroid/message", led_message);
     setTimeout(()=> {
       mqtt.publish("wled/158690", "OFF");
       changeScenes.change(thing.client, thing.obs, thing.mqtt, thing.currentScene);
@@ -26,6 +26,7 @@ exports.default = (client, obs, mqtt) => {
   });
 
   client.on("raided", (channel, username, viewers) => {
+    console.log(channel);
     eventsMessage(100,
       `Estamos recebendo uma super raid do pessoal da live => @${username}, valeu pela raid e sejam todos bem vindos (${viewers} viewers!) `,
       `Ei você que veio da live  @${username}, seja bem vindo!`,
