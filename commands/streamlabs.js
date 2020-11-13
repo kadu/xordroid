@@ -1,10 +1,9 @@
 const changeScenes = require("./changeScenes");
 
-exports.default = (client, obs, mqtt) => {
+exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
       if (isBot) return;
 
-      //changeScenes.change(client, obs, mqtt, "proto");
       var thing = this;
       thing.client = client;
       thing.obs = obs;
@@ -21,11 +20,11 @@ exports.default = (client, obs, mqtt) => {
           client.say(client.channels[0], `Valeu @${sendedBy} pelo follow, vou até soltar uns rojões!`);
           mqtt.publish("wled/158690", "ON");
           mqtt.publish("wled/158690/api", "FX=90&SN=1");
-          mqtt.publish("xordroid/message", `Valeu ae @${sendedBy}`);
+          messages.push(`Valeu ae @${sendedBy}`);
           changeScenes.change(client, obs, mqtt, "webcam");
           try {
             setTimeout(()=> {
-              mqtt.publish("wled/158690", "OFF");
+              mqtt.publish("wled/158690/api", "FX=91&SN=1");
               console.log("DENTRO thing.currentScene = ", thing.currentScene);
               changeScenes.change(thing.client, thing.obs, thing.mqtt, thing.currentScene);
             },16000);

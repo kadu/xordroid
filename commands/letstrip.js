@@ -1,6 +1,9 @@
-exports.default = (client, obs, mqtt) => {
+exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
       if (isBot) return;
+
+      // console.log("**context", context);
+      // console.log("**target", target);
 
       let parsedMessage = message.split(" ");
       if(parsedMessage[0] === "!led") {
@@ -26,6 +29,7 @@ exports.default = (client, obs, mqtt) => {
             // error
           } else {
             if(value >= 0 && value <= 101) {
+              mqtt.publish("wled/158690", "ON");
               mqtt.publish("wled/158690/api", "FX=" + parsedMessage[2] + "&SN=1");
             }
           }
@@ -35,10 +39,11 @@ exports.default = (client, obs, mqtt) => {
           let isColor = /^#[0-9A-F]{6}$/i.test(parsedMessage[2]);
 
           if(!isColor) {
-            if(parsedMessage[1] === "cor")	client.say(client.channels[0], `@${username} Cara, manda a cor assim => #RRGGBB`);
-            if(parsedMessage[1] === "color")	client.say(client.channels[0], `@${username} Dude, send color like this => #RRGGBB`);
+            if(parsedMessage[1] === "cor")	client.say(client.channels[0], `@${context.username} Cara, manda a cor assim => #RRGGBB`);
+            if(parsedMessage[1] === "color")	client.say(client.channels[0], `@${context.username} Dude, send color like this => #RRGGBB`);
 
           } else {
+            mqtt.publish("wled/158690", "ON");
             mqtt.publish("wled/158690/col", parsedMessage[2]);
           }
         }

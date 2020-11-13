@@ -24,6 +24,8 @@ const mqtt_options = {
 };
 
 var porta;
+var messages = [];
+var timerIsOn = true;
 const mqtt = MQTT.connect(mqtt_options);
 
 mqtt.on('connect', function () {
@@ -35,9 +37,27 @@ mqtt.on('connect', function () {
 			mqtt.publish("wled/158690/col", "#7FFF00");
 			mqtt.publish("wled/158690", "ON");
     }
-  })
-});
+  });
 
+  mqtt.subscribe('xordroid/timerIsOn', function (err) {
+  });
+
+  mqtt.on('message', function (topic, message) {
+    if(topic.toString() == 'xordroid/timerIsOn') {
+      var isTrueSet = (message == 'true');
+      timerIsOn = isTrueSet;
+    }
+  });
+
+  setInterval(() => {
+    if(timerIsOn) {
+      if(messages.length > 0) {
+            let message = messages.shift();
+            mqtt.publish("xordroid/message", message);
+      }
+    }
+  }, 1500);
+});
 
 const client = new tmi.Client({
 	options: { debug: true },
@@ -66,7 +86,7 @@ client.on("join", (channel, username, self) => {
 
 client.on('message', (channel, tags, message, self) => {
 	if(self) return;
-	const commands = ["!led", "!mqtt", "!comandos", "!social", "!eu", "!camera", "!tela", "!proto", "!webcam", "!youtube", "!instagram", "!github", "!teste", "!matrix"];
+	const commands = ["!led", "!mqtt", "!comandos", "!social", "!eu", "!camera", "!tela", "!proto", "!webcam", "!youtube", "!instagram", "!github", "!teste", "!matrix", "!donate"];
 	message_parse = message.split(" "); // split message
 	if(commands.includes(message_parse[0])) { // has commands on message
 		parse_commands(message_parse, tags.username);
@@ -79,5 +99,5 @@ client.connect();
 readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
   .forEach((file) => {
-		require(`./commands/${file}`).default(client, obs, mqtt);
+		require(`./commands/${file}`).default(client, obs, mqtt, messages);
 	});

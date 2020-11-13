@@ -1,4 +1,4 @@
-exports.default = (client) => {
+exports.default = (client, obs, mqtt, messages) => {
 
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
@@ -14,6 +14,7 @@ exports.default = (client) => {
         client.say(target, 'https://bit.ly/canaldokadu');
         break;
 
+      case '!insta':
       case '!instagram':
         client.say(target, 'https://www.instagram.com/canaldokadu/');
         break;
@@ -21,6 +22,14 @@ exports.default = (client) => {
       case '!github':
         client.say(target, 'https://github.com/kadu/');
         break;
+
+      case '!lojinha':
+        client.say(target, 'http://kaduzi.us/lojinha');
+        break;
+
+        case '!discord':
+          client.say(target, 'https://discord.gg/Gk5e5Cx');
+          break;
 
       default:
         break;

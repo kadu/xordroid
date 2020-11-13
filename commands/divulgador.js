@@ -1,4 +1,4 @@
-exports.default = (client, target, context, message) => {
+exports.default = (client, target, context, messages) => {
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
 
@@ -6,28 +6,36 @@ exports.default = (client, target, context, message) => {
     case '!jpbrab0':
       client.say(
         target,
-        `Papai, é você? twitch.tv/jpbrab0`,
+        `Papai, é você? @jpbrab0`,
       );
       break;
     case '!caraio':
       client.say(
         target,
-        `Acho que cê ta na live errada Kappa. A certa é essa aqui: twitch.tv/pachicodes`,
+        `Acho que cê ta na live errada Kappa. A certa é essa aqui: @pachicodes`,
       );
       break;
     case '!captura':
+    case '!capturar':
     case '!selvagem':
       client.say(
         target,
-        `Acho que cê ta na live errada Kappa. A certa é essa aqui: twitch.tv/pokemaobr`,
+        `Acho que cê ta na live errada Kappa. A certa é essa aqui: @pokemaobr`,
       );
       break;
-    case '!capturar':
-      client.say(
-        target,
-        `Acho que cê ta na live errada Kappa. A certa é essa aqui: twitch.tv/pokemaobr`,
-      );
-      break;
+      case '!participar':
+      case '!meme':
+        client.say(
+          target,
+          `Eu ouvi falar C# ? cola lá na live do @daniel_dev`,
+        );
+        break;
+        case '!party':
+          client.say(
+            target,
+            `A festa é com o @webmat1, não é aqui não`,
+          );
+          break;
     default:
       break;
       }
