@@ -1,3 +1,14 @@
+const namedColors = require("color-name-list");
+const capitalize = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const capitalize2 = (string) => {
+  return string.split(' ').map(capitalize).join(' ')
+  .replace(" In ", " in ")
+  .replace(" Of ", " of ");
+}
+
 exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
       if (isBot) return;
@@ -39,9 +50,14 @@ exports.default = (client, obs, mqtt, messages) => {
           let isColor = /^#[0-9A-F]{6}$/i.test(parsedMessage[2]);
 
           if(!isColor) {
-            if(parsedMessage[1] === "cor")	client.say(client.channels[0], `@${context.username} Cara, manda a cor assim => #RRGGBB`);
-            if(parsedMessage[1] === "color")	client.say(client.channels[0], `@${context.username} Dude, send color like this => #RRGGBB`);
-
+            let someNamedColor = namedColors.find(color => color.name === capitalize2(parsedMessage[2]));
+            if(typeof someNamedColor !== 'undefined') {
+              mqtt.publish("wled/158690", "ON");
+              mqtt.publish("wled/158690/col", someNamedColor.hex);
+            } else {
+              if(parsedMessage[1] === "cor")	client.say(client.channels[0], `@${context.username} Cara, manda a cor assim => #RRGGBB`);
+              if(parsedMessage[1] === "color")	client.say(client.channels[0], `@${context.username} Dude, send color like this => #RRGGBB`);
+            }
           } else {
             mqtt.publish("wled/158690", "ON");
             mqtt.publish("wled/158690/col", parsedMessage[2]);
@@ -50,6 +66,3 @@ exports.default = (client, obs, mqtt, messages) => {
       }
   });
 };
-
-
-
