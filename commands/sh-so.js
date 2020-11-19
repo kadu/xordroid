@@ -34,7 +34,10 @@ exports.default = (client, obs, mqtt, messages) => {
     'bittoin',
     'canturil',
     'railanepassos',
-    'programadorbinario'
+    'programadorbinario',
+    'kastr0walker',
+    'stormgirlbr'
+
   ];
 
     if(streamers.includes(username)) {
