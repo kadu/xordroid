@@ -23,7 +23,7 @@ exports.default = (client, obs, mqtt, messages) => {
   }
 
   client.on('subscription', (channel, username, method, message, userstate) => {
-    eventsMessage(66,
+    eventsMessage(100,
       `Ae @${username}, valeu muitão pelo SUB, o coração até para!!! Tks`,
       `a Live agradece @${username}`,
       20000);
