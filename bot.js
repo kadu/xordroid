@@ -74,7 +74,7 @@ const client = new tmi.Client({
 
 function parse_commands(raw_commands, username) {
 	if(raw_commands[0] === "!comandos") {
-		client.say(client.channels[0], '!led help | !eu | !camera help | !matrix <mensagem>');
+		client.say(client.channels[0], '!led help | !eu | !camera help | !matrix <mensagem> | !donate | !github | tem  mais mas você terá que descobrir :P');
 	}
 }
 
@@ -85,8 +85,29 @@ client.on("join", (channel, username, self) => {
 });
 
 client.on('message', (channel, tags, message, self) => {
-	if(self) return;
-	const commands = ["!led", "!mqtt", "!comandos", "!social", "!eu", "!camera", "!tela", "!proto", "!webcam", "!youtube", "!instagram", "!github", "!teste", "!matrix", "!donate"];
+  if(self) return;
+  const commands = [
+      "!led"
+    , "!mqtt"
+    , "!comandos"
+    , "!social"
+    , "!eu"
+    , "!camera"
+    , "!tela"
+    , "!proto"
+    , "!webcam"
+    , "!youtube"
+    , "!instagram"
+    , "!github"
+    , "!teste"
+    , "!matrix"
+    , "!donate"
+    , "!xordroid"
+    , "!streamdeckble"
+    , "!streamdeck"
+    , "!gatekeeperiot"
+    , "!gatekeeper"
+  ];
 	message_parse = message.split(" "); // split message
 	if(commands.includes(message_parse[0])) { // has commands on message
 		parse_commands(message_parse, tags.username);

@@ -43,17 +43,17 @@ exports.default = (client, obs, mqtt, messages) => {
       `Valeu pelos bits!`);
   });
 
-  client.on("anongiftpaidupgrade", (channel, username, userstate) => {
-    eventsMessage(40,
-      `Valeu ae ${username} por continuar o sub ;)`,
-      `Valeu pelo sub!`);
-  });
+  // client.on("anongiftpaidupgrade", (channel, username, userstate) => {
+  //   eventsMessage(40,
+  //     `Valeu ae ${username} por continuar o sub ;)`,
+  //     `Valeu pelo sub!`);
+  // });
 
-  client.on("giftpaidupgrade", (channel, username, sender, userstate) => {
-    eventsMessage(40,
-      `Ae ${sender} eu e o ${username} agradecemos pelo sub! ;)`,
-      `Valeu ${sender} e ${username}!`);
-  });
+  // client.on("giftpaidupgrade", (channel, username, sender, userstate) => {
+  //   eventsMessage(40,
+  //     `Ae ${sender} eu e o ${username} agradecemos pelo sub! ;)`,
+  //     `Valeu ${sender} e ${username}!`);
+  // });
 
   client.on("hosted", (channel, username, viewers, autohost) => {
     eventsMessage(40,
@@ -69,23 +69,23 @@ exports.default = (client, obs, mqtt, messages) => {
       `Valeu ${username}!`);
   });
 
-  client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
-    // Do your stuff.
-    let winner = userstate["msg-param-recipient-display-name"];
+  // client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
+  //   // Do your stuff.
+  //   let winner = userstate["msg-param-recipient-display-name"];
 
-    eventsMessage(40,
-      `Obrigado ${username} pelo subGift, que isso em ${winner} só alegria!`,
-      `Valeu ${username} e bem vindo aos subs ${winner}`);
-  });
+  //   eventsMessage(40,
+  //     `Obrigado ${username} pelo subGift, que isso em ${winner} só alegria!`,
+  //     `Valeu ${username} e bem vindo aos subs ${winner}`);
+  // });
 
-  client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
-    // Do your stuff.
-    let senderCount = ~~userstate["msg-param-sender-count"];
+  // client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
+  //   // Do your stuff.
+  //   let senderCount = ~~userstate["msg-param-sender-count"];
 
-    eventsMessage(40,
-      `Obrigado ${username} pelo submysterygift!`,
-      `Valeu ${username}!!`);
-  });
+  //   eventsMessage(40,
+  //     `Obrigado ${username} pelo submysterygift!`,
+  //     `Valeu ${username}!!`);
+  // });
 
   // client.on("join", (channel, username, self) => {
   //   // mqtt.publish("xordroid/message", `X9: ${username}`);
