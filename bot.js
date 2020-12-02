@@ -80,7 +80,7 @@ function parse_commands(raw_commands, username) {
 
 client.on("join", (channel, username, self) => {
   if(self) {
-    client.say(channel,"Olá pessoas, eu sou o XORDroid, manda um !comandos ai no chat e veja minhas funcionalidades ;D");
+    client.say(channel,"Olá pessoas, eu sou o XORDroid, manda um !comandos ai no chat e veja minhas funcionalidades ;D ... e !projetos pra ver o que já fizemos");
 	}
 });
 
@@ -107,6 +107,8 @@ client.on('message', (channel, tags, message, self) => {
     , "!streamdeck"
     , "!gatekeeperiot"
     , "!gatekeeper"
+    , "!projetos"
+    , "!projects"
   ];
 	message_parse = message.split(" "); // split message
 	if(commands.includes(message_parse[0])) { // has commands on message

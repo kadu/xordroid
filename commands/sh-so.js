@@ -37,8 +37,14 @@ exports.default = (client, obs, mqtt, messages) => {
     'programadorbinario',
     'kastr0walker',
     'stormgirlbr',
-    'bgfOW',
-    'victorzonta'
+    'bgfow',
+    'victorzonta',
+    'carpa_flamejante',
+    'racerxdl',
+    'bedabliu',
+    'Carol_de_Abreu',
+    'arig4m3r',
+    'devgiordane'
   ];
 
     if(streamers.includes(username)) {

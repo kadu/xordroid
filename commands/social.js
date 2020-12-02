@@ -27,9 +27,13 @@ exports.default = (client, obs, mqtt, messages) => {
         client.say(target, 'http://kaduzi.us/lojinha');
         break;
 
-        case '!discord':
-          client.say(target, 'https://discord.gg/Gk5e5Cx');
-          break;
+      case '!discord':
+        client.say(target, 'https://discord.gg/Gk5e5Cx');
+        break;
+
+      case '!julialabs':
+        client.say(target, 'Discord -> https://discord.gg/qdfaNcPv | Twitch.tv -> https://www.twitch.tv/julialabs | Youtube -> https://www.youtube.com/channel/UChfu9xWITOvsXYLKm7hieSQ');
+        break;
 
       default:
         break;

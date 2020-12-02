@@ -7,7 +7,7 @@ exports.default = (client, obs, mqtt, messages) => {
           case '!streamdeck':
               client.say(
                   target,
-                  `Ficou bem massa esse projeto, da uma olhada aqui ó https://github.com/kadu/arduino_stream_deck`,
+                  `Nosso StreamDeck ficou bem massa, da uma olhada aqui ó https://github.com/kadu/arduino_stream_deck`,
               );
               break;
           default:
