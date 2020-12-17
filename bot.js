@@ -5,6 +5,28 @@ const obs = new OBSWebSocket();
 const tmi = require('tmi.js');
 const MQTT = require("mqtt");
 const { Console } = require('console');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log("Papai ta ON");
+});
+
+const botSchema = new mongoose.Schema({
+  userid: String,
+  points: Number
+});
+
+const botDB = mongoose.model('BOT', botSchema);
+
+const silence = new botDB({ userid: 'Silence', points: 10 });
+console.log("******************");
+console.log(silence.userid); // 'Silence'
+console.log("******************");
+silence.save();
+
+
 
 dotenv.config();
 
@@ -73,10 +95,12 @@ const client = new tmi.Client({
 });
 
 function parse_commands(raw_commands, username) {
-	if(raw_commands[0] === "!comandos") {
+	if(raw_commands[0] === "!comandos"||raw_commands[0] === "!help"| raw_commands[0] === "!ajuda") {
 		client.say(client.channels[0], '!led help | !eu | !camera help | !matrix <mensagem> | !donate | !github | tem  mais mas você terá que descobrir :P');
 	}
 }
+
+
 
 client.on("join", (channel, username, self) => {
   if(self) {
@@ -109,6 +133,8 @@ client.on('message', (channel, tags, message, self) => {
     , "!gatekeeper"
     , "!projetos"
     , "!projects"
+    , "!ajuda"
+    , "!help"
   ];
 	message_parse = message.split(" "); // split message
 	if(commands.includes(message_parse[0])) { // has commands on message
