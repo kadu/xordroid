@@ -90,6 +90,7 @@ exports.default = (client, obs, mqtt, messages) => {
       case '!screen':
         changeScene("tela");
         break;
+      case '!cam2':
       case '!proto':
       case '!protoboard':
       case '!breadboard':
