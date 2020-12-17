@@ -35,6 +35,10 @@ exports.default = (client, obs, mqtt, messages) => {
         client.say(target, 'Discord -> https://discord.gg/qdfaNcPv | Twitch.tv -> https://www.twitch.tv/julialabs | Youtube -> https://www.youtube.com/channel/UChfu9xWITOvsXYLKm7hieSQ');
         break;
 
+      case '!pix':
+        client.say(target, 'Donate com PIX -> http://www.kaduzi.us/pix');
+        break;
+
       default:
         break;
     }
