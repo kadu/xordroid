@@ -44,7 +44,24 @@ exports.default = (client, obs, mqtt, messages) => {
     'bedabliu',
     'Carol_de_Abreu',
     'arig4m3r',
-    'devgiordane'
+    'devgiordane',
+    'alecams',
+    'leitche',
+    'paulobeckman',
+    'tonhocodes',
+    'morgiovanelli',
+    'escslabtech',
+    'altthabs',
+    'wesleylab',
+    'torrevorpal',
+    'fer2easy',
+    'guridarth',
+    'rafabandoni',
+    'casadodev',
+    'xdidadev',
+    'profbrunolopes',
+    'devNelson_',
+    'guina_o_artesao'
   ];
 
     if(streamers.includes(username)) {
