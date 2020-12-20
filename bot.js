@@ -6,6 +6,8 @@ const tmi = require('tmi.js');
 const MQTT = require("mqtt");
 const { Console } = require('console');
 const mongoose = require('mongoose');
+const request = require('request');
+
 mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -25,8 +27,6 @@ console.log("******************");
 console.log(silence.userid); // 'Silence'
 console.log("******************");
 silence.save();
-
-
 
 dotenv.config();
 
@@ -149,4 +149,4 @@ readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
   .forEach((file) => {
 		require(`./commands/${file}`).default(client, obs, mqtt, messages);
-	});
+  });
