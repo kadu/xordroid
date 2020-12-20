@@ -6,27 +6,26 @@ const tmi = require('tmi.js');
 const MQTT = require("mqtt");
 const { Console } = require('console');
 const mongoose = require('mongoose');
-const request = require('request');
 
-mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true});
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log("Papai ta ON");
-});
+// mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true});
+// const db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'connection error:'));
+// db.once('open', function() {
+//   console.log("Papai ta ON");
+// });
 
-const botSchema = new mongoose.Schema({
-  userid: String,
-  points: Number
-});
+// const botSchema = new mongoose.Schema({
+//   userid: String,
+//   points: Number
+// });
 
-const botDB = mongoose.model('BOT', botSchema);
+// const botDB = mongoose.model('BOT', botSchema);
 
-const silence = new botDB({ userid: 'Silence', points: 10 });
-console.log("******************");
-console.log(silence.userid); // 'Silence'
-console.log("******************");
-silence.save();
+// const silence = new botDB({ userid: 'Silence', points: 10 });
+// console.log("******************");
+// console.log(silence.userid); // 'Silence'
+// console.log("******************");
+// silence.save();
 
 dotenv.config();
 
