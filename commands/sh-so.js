@@ -4,7 +4,6 @@ exports.default = (client, obs, mqtt, messages) => {
   client.on('join', (channel, username, self) => {
     let streamers = [
     'daniel_dev',
-    'kaduzius',
     'webmat1',
     'pokemaobr',
     'tearing5',
