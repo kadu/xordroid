@@ -1,33 +1,21 @@
+require('dotenv').config();
 const { readdirSync } = require('fs');
-const dotenv = require('dotenv');
 const OBSWebSocket = require('obs-websocket-js');
 const obs = new OBSWebSocket();
 const tmi = require('tmi.js');
 const MQTT = require("mqtt");
-const { Console } = require('console');
-const mongoose = require('mongoose');
+const User = require('./models/User');
 
-// mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true});
-// const db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'connection error:'));
-// db.once('open', function() {
-//   console.log("Papai ta ON");
-// });
+const tryMongo = async () => {
+  const user = new User({
+    _id: 'someCustomId',
+    points: 100
+  });
+  await user.save();
+  console.log(JSON.stringify(user))
+}
 
-// const botSchema = new mongoose.Schema({
-//   userid: String,
-//   points: Number
-// });
-
-// const botDB = mongoose.model('BOT', botSchema);
-
-// const silence = new botDB({ userid: 'Silence', points: 10 });
-// console.log("******************");
-// console.log(silence.userid); // 'Silence'
-// console.log("******************");
-// silence.save();
-
-dotenv.config();
+tryMongo();
 
 const TWITCH_BOT_USERNAME = process.env.BOT_USERNAME;
 const TWITCH_OAUTH_TOKEN = process.env.OAUTH_TOKEN;
