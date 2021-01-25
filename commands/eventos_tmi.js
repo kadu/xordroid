@@ -41,7 +41,7 @@ exports.default = (client, obs, mqtt, messages) => {
       `Recebendo uma super raid do pessoal da live @${username}, valeu pela raid e sejam todos bem vindos!) `,
       `Nossa, tem ${~~viewers} chegando, ta chovendo gente aqui!`,
       40000);
-      player.play(`commands/audio/raid/welcome.mp3`, function(err){
+      player.play(`commands/audio/raid/welcome2.mp3`, function(err){
         if (err) throw err
       });
   });
