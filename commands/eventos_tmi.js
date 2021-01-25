@@ -1,4 +1,9 @@
 const changeScenes = require("./changeScenes");
+var player = require('play-sound')(opts = {});
+
+function randomInt(min, max) {
+	return min + Math.floor((max - min) * Math.random());
+}
 
 exports.default = (client, obs, mqtt, messages) => {
   var thing = this;
@@ -14,7 +19,6 @@ exports.default = (client, obs, mqtt, messages) => {
       mqtt.publish("wled/158690/col", "#FF0000");
     }
     mqtt.publish("wled/158690/api", `FX=${effect}&SN=1`);
-    // mqtt.publish("xordroid/message", led_message);
     messages.push(led_message);
     setTimeout(()=> {
       mqtt.publish("wled/158690", "OFF");
@@ -27,13 +31,19 @@ exports.default = (client, obs, mqtt, messages) => {
       `Ae @${username}, valeu muitão pelo SUB, o coração até para!!! Tks`,
       `a Live agradece @${username}`,
       20000);
+      player.play(`commands/audio/coracao/coracao01.wav`, function(err){
+        if (err) throw err
+      });
   });
 
   client.on("raided", (channel, username, viewers) => {
-    eventsMessage(57,
+    eventsMessage(68,
       `Recebendo uma super raid do pessoal da live @${username}, valeu pela raid e sejam todos bem vindos!) `,
       `Nossa, tem ${~~viewers} chegando, ta chovendo gente aqui!`,
-      20000);
+      40000);
+      player.play(`commands/audio/raid/welcome.mp3`, function(err){
+        if (err) throw err
+      });
   });
 
   client.on("cheer", (channel, userstate, message) => {
