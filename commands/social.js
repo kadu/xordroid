@@ -28,6 +28,10 @@ exports.default = (client, obs, mqtt, messages) => {
         break;
 
       case '!discord':
+        client.say(target, 'https://discord.gg/wmmTKHeHDJ');
+        break;
+
+      case '!iotstreamers':
         client.say(target, 'https://discord.gg/Gk5e5Cx');
         break;
 
