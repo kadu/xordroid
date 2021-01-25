@@ -3,7 +3,7 @@ exports.default = (client, obs, mqtt, messages) => {
         if (isBot) return;
 
         switch (message) {
-            case '!projets':
+            case '!projects':
             case '!projetos':
                 client.say(
                     target,
