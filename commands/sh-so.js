@@ -60,7 +60,9 @@ exports.default = (client, obs, mqtt, messages) => {
     'xdidadev',
     'profbrunolopes',
     'devNelson_',
-    'guina_o_artesao'
+    'guina_o_artesao',
+    'tairritadotio',
+    'indice_do_conhecimento'
   ];
 
     if(streamers.includes(username)) {
