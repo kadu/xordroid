@@ -6,7 +6,7 @@ const translate = require('translate');
 dotenv.config();
 
 translate.engine = process.env.TRANSLATE_ENGINE;
-translate.key = process.env.TRANSLATE_KEY;
+translate.key = process.env.GOOGLE_KEY;
 
 const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -32,7 +32,11 @@ const parseColor = async (color) => {
     } else {
       const translated_color = await translate(cp, { from: 'pt', to: 'en' });
       someNamedColor = namedColors.find(color => color.name === translated_color);
-      return someNamedColor.hex;
+      if(typeof someNamedColor !== 'undefined') {
+        return someNamedColor.hex;
+      }  else {
+        return -1;
+      }
     }
   } else {
     return color;
