@@ -1,0 +1,40 @@
+{
+  "name": "kaduzius_chatbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^3.1.3",
+    "async-mqtt": "^2.6.1",
+    "cheerio": "^1.0.0-rc.3",
+    "color-name-list": "^7.19.0",
+    "dotenv": "^8.2.0",
+    "johnny-five": "^2.0.0",
+    "minimist": "^1.2.5",
+    "mongoose": "^5.11.8",
+    "mqtt": "^4.2.1",
+    "nodemon": "^2.0.7",
+    "obs-websocket-js": "^4.0.1",
+    "play-sound": "^1.1.3",
+    "request-promise": "^4.2.6",
+    "streamlabs": "^3.0.0",
+    "tmi.js": "^1.5.0",
+    "translate": "^1.1.2",
+    "yargs": "^15.4.1",
+    "yt-subscription-count-scraper": "^1.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kadu/xordroid.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kadu/xordroid/issues"
+  },
+  "homepage": "https://github.com/kadu/xordroid#readme"
+}
