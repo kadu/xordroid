@@ -15,29 +15,23 @@ const util = require('util');
 const clienttts = new textToSpeech.TextToSpeechClient();
 
 async function quickStart(message) {
-  // The text to synthesize
   const text = message;
 
-  // Construct the request
   const request = {
     input: {text: text},
     // Select the language and SSML voice gender (optional)
     voice: {languageCode: 'pt-BR', ssmlGender: 'NEUTRAL'},
-    // select the type of audio encoding
     audioConfig: {audioEncoding: 'MP3'},
   };
 
-  // Performs the text-to-speech request
   const [response] = await clienttts.synthesizeSpeech(request);
-  // Write the binary audio content to a local file
   const writeFile = util.promisify(fs.writeFile);
   await writeFile('output.mp3', response.audioContent, 'binary');
-  setTimeout(() => {
-    player.play('output.mp3', function(err){
-      if (err) throw err
-      return;
-    });
-  },1000);
+  player.play('output.mp3', function(err){
+    if (err) throw err
+    return;
+  });
+
   console.log('Audio content written to file: output.mp3');
 }
 
@@ -116,10 +110,10 @@ mqtt.on('connect', function () {
     }
   }, 1500);
 
-  setInterval(() => {
+  setInterval(async () => {
     if(ttsQueue.length > 0) {
       let tts = ttsQueue.shift();
-      quickStart(tts);
+      await quickStart(tts);
     }
   }, 2500);
 });
