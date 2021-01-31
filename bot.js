@@ -6,35 +6,28 @@ const tmi = require('tmi.js');
 const MQTT = require("mqtt");
 const { Console } = require('console');
 const mongoose = require('mongoose');
-var player = require('play-sound')(opts = {});
+const sound = require("sound-play");
 const textToSpeech = require('@google-cloud/text-to-speech');
 const fs = require('fs');
 const util = require('util');
 
 
 const clienttts = new textToSpeech.TextToSpeechClient();
-
 async function quickStart(message) {
-  const text = message;
+  const text = message.msg;
+  const inputType = message.inputType;
 
   const request = {
-    input: {text: text},
-    // Select the language and SSML voice gender (optional)
-    voice: {languageCode: 'pt-BR', ssmlGender: 'NEUTRAL'},
+    input: {[inputType]: text},
+    voice: {languageCode: message.lang, ssmlGender: 'NEUTRAL'},
     audioConfig: {audioEncoding: 'MP3'},
   };
 
   const [response] = await clienttts.synthesizeSpeech(request);
   const writeFile = util.promisify(fs.writeFile);
   await writeFile('output.mp3', response.audioContent, 'binary');
-  player.play('output.mp3', function(err){
-    if (err) throw err
-    return;
-  });
-
-  console.log('Audio content written to file: output.mp3');
+  sound.play(`${__dirname}\\output.mp3`);
 }
-
 
 mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true});
 const db = mongoose.connection;
@@ -91,12 +84,12 @@ mqtt.on('connect', function () {
     }
   });
 
-  mqtt.subscribe('xordroid/timerIsOn', function (err) {
+  mqtt.subscribe('homie/ledmatrix/message/state', function (err) {
   });
 
   mqtt.on('message', function (topic, message) {
-    if(topic.toString() == 'xordroid/timerIsOn') {
-      var isTrueSet = (message == 'true');
+    if(topic.toString() == 'homie/ledmatrix/message/state') {
+      var isTrueSet = (message == 'Idle');
       timerIsOn = isTrueSet;
     }
   });
@@ -105,7 +98,7 @@ mqtt.on('connect', function () {
     if(timerIsOn) {
       if(messages.length > 0) {
             let message = messages.shift();
-            mqtt.publish("xordroid/message", message);
+            mqtt.publish("homie/ledmatrix/message/message/set", message);
       }
     }
   }, 1500);
@@ -117,14 +110,6 @@ mqtt.on('connect', function () {
     }
   }, 2500);
 });
-
-// mqtt.subscribe("homie/temperature/temperature/degrees");
-// mqtt.on("message", (topic, message) => {
-//   console.log("MQTT DEBUG");
-//   if(topic === "homie/temperature/temperature/degrees") {
-//     messages.push(`Agora no quarto: ${JSON.parse(message)} oC`);
-//   }
-// });
 
 const client = new tmi.Client({
   options: {

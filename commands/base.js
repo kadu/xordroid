@@ -1,4 +1,4 @@
-exports.default = (client, obs, mqtt, messages) => {
+exports.default = (client, obs, mqtt, messages, botDB, commandQueue, ttsQueue) => {
     client.on('message', (target, context, message, isBot) => {
         if (isBot) return;
 
