@@ -1,3 +1,5 @@
+const changeScenes = require("./changeScenes");
+
 exports.default = (client, obs, mqtt, messages) => {
   let currentScene;
   let obsIsConnected;
@@ -44,11 +46,11 @@ exports.default = (client, obs, mqtt, messages) => {
       });
   });
 
+  /*
   function changeScene(Scene) {
-
     if(!["Esquerda + Protobord", "FullScreen", "Esquerda + Webcam"].includes(currentScene)) {
       if(currentScene == "Obrigado") {
-        client.say(client.channels[0], "Valeu por acompanhar a live! Até a próxima e para de querer xeretar!");
+        client.say(client.channels[0], "Valeu por acompanhar a live! Até a próxima!");
       } else if(currentScene == "Ja volto") {
         client.say(client.channels[0], "Eu estou aqui, mas não posso fazer isso agora ;)");
       } else if(currentScene == "Abertura") {
@@ -78,9 +80,10 @@ exports.default = (client, obs, mqtt, messages) => {
         'scene-name': newScene
       });
     } catch (error) {
-      console.log("erro no setcurrentschene", error);
+      console.log("*TELAS.JS* erro no setcurrentschene", error);
     }
   }
+  */
 
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
@@ -88,16 +91,16 @@ exports.default = (client, obs, mqtt, messages) => {
     switch (message) {
       case '!tela':
       case '!screen':
-        changeScene("tela");
+        changeScenes.change(client, obs, mqtt,"tela");
         break;
       case '!cam2':
       case '!proto':
       case '!protoboard':
       case '!breadboard':
-        changeScene("proto");
+        changeScenes.change(client, obs, mqtt,"proto");
         break;
       case '!webcam':
-        changeScene("webcam");
+        changeScenes.change(client, obs, mqtt,"webcam");
         break;
       default:
         break;
