@@ -102,18 +102,5 @@ exports.default = (client, obs, mqtt, messages) => {
       `Valeu ${username}!!`
       ,20000);
   });
-
-  // client.on("join", (channel, username, self) => {
-  //   // mqtt.publish("xordroid/message", `X9: ${username}`);
-  //   // messages.push(`X9: ${username}`);
-  // });
-
-  // client.on("part", (channel, username, self) => {
-  //   mqtt.publish("xordroid/message", `Dedoduro: Tchau ${username}`);
-  // });
-
-  // client.on("raw_message", (messageCloned, message) => {
-  //   console.log(message.raw);
-  // });
 };
 
