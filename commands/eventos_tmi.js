@@ -13,6 +13,7 @@ exports.default = (client, obs, mqtt, messages) => {
       thing.currentScene = changeScenes.getCurrentScene();
 
   function eventsMessage(effect, chat_message, led_message, timeoutTimer=20000) {
+    thing.currentScene = changeScenes.getCurrentScene();
     client.say(thing.client.channels[0], chat_message);
     mqtt.publish("wled/158690", "ON");
     if(effect == 100) {
@@ -20,6 +21,7 @@ exports.default = (client, obs, mqtt, messages) => {
     }
     mqtt.publish("wled/158690/api", `FX=${effect}&SN=1`);
     messages.push(led_message);
+    changeScenes.change(thing.client, thing.obs, thing.mqtt, "webcam");
     setTimeout(()=> {
       mqtt.publish("wled/158690", "OFF");
       changeScenes.change(thing.client, thing.obs, thing.mqtt, thing.currentScene);
@@ -40,7 +42,7 @@ exports.default = (client, obs, mqtt, messages) => {
     eventsMessage(68,
       `Recebendo uma super raid do pessoal da live @${username}, valeu pela raid e sejam todos bem vindos!) `,
       `Nossa, tem ${~~viewers} chegando, ta chovendo gente aqui!`,
-      40000);
+      19000);
       player.play(`commands/audio/raid/welcome2.mp3`, function(err){
         if (err) throw err
       });
