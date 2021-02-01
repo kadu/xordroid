@@ -63,7 +63,29 @@ exports.default = (client, obs, mqtt, messages) => {
     'guina_o_artesao',
     'tairritadotio',
     'indice_do_conhecimento',
-    'vitorbgs'
+    'vitorbgs',
+    '8bitstore',
+    'vitthin',
+    'cabracast',
+    'JohnsJohnsHell',
+    'FilipeSVieira',
+    'Dmaneiro88',
+    'player_dbr',
+    'purplepizza92',
+    'PunkDoDevOps',
+    'canaldodrogs',
+    'bug_elseif',
+    'JeyLAB_Robotica',
+    'ThiagoHofmeister',
+    'MercurioGurgel',
+    'sampaioleal',
+    'AqueleNoia',
+    'grandedev',
+    'wesleycsj',
+    'mr_eng_tails',
+    'jnthas',
+    'Rattones',
+    'AdielSeffrin'
   ];
 
     if(streamers.includes(username)) {
