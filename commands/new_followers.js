@@ -26,7 +26,7 @@ exports.default = (client, obs, mqtt, messages) => {
           mqtt.publish("wled/158690", "ON");
           mqtt.publish("wled/158690/api", "FX=90&SN=1");
           messages.push(`Valeu ae @${sendedBy}`);
-          sound.play(`${__dirname}\\commands\\audio\\rojoes\\firework0${randomInt(1,4)}.wav`).then((response) => {
+          sound.play(`${__dirname}\\audio\\rojoes\\firework0${randomInt(1,4)}.wav`).then((response) => {
           }).catch((error) => {
             console.error(error);
           });
