@@ -23,11 +23,7 @@ exports.default = (client, obs, mqtt, messages) => {
         switch (message) {
             case '!ytcount':
                 contador = await getCounter();
-                messages.push(`só tenho ${contador} inscritos no youtube  :( , me ajuda a chegar a 100`);
-                // client.say(
-                //     target,
-                //     `Eu tenho ${contador}  inscritos no meu canal do youtube, se inscreve lá também e me ajuda chegar a 100 inscritos ?`,
-                // );
+                messages.push(`Valeu por chegar a ${contador} inscritos no youtube \\o/`);
                 break;
             default:
                 break;
