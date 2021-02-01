@@ -33,7 +33,7 @@ exports.default = (client, obs, mqtt, messages) => {
       `Ae @${username}, valeu muitão pelo SUB, o coração até para!!! Tks`,
       `a Live agradece @${username}`,
       20000);
-      sound.play(`commands/audio/coracao/coracao01.wav`).then((response) => {
+      sound.play(`${__dirname}\\commands\\audio\\coracao\\coracao01.wav`).then((response) => {
       }).catch((error) => {
         console.error(error);
       });
@@ -45,7 +45,7 @@ exports.default = (client, obs, mqtt, messages) => {
       `Recebendo uma super raid do pessoal da live @${username}, valeu pela raid e sejam todos bem vindos!) `,
       `Nossa, tem ${~~viewers} chegando, ta chovendo gente aqui!`,
       19000);
-      sound.play(`commands/audio/raid/welcome2.mp3`).then((response) => {
+      sound.play(`${__dirname}\\commands\\audio\\raid\\welcome2.mp3`).then((response) => {
       }).catch((error) => {
         console.error(error);
       });

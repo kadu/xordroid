@@ -84,7 +84,8 @@ mqtt.on('connect', function () {
 			console.log("MQTT Ready!");
 			mqtt.publish("wled/158690/api", "FX=80&SN=1");
 			mqtt.publish("wled/158690/col", "#7FFF00");
-			mqtt.publish("wled/158690", "ON");
+      mqtt.publish("wled/158690", "ON");
+      mqtt.publish("homie/ledmatrix/matrix/on/set","true");
     }
   });
 
