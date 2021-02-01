@@ -2,7 +2,7 @@ exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
 
-    let proxima_data = "06/02"
+    let proxima_data = "06/02/2021"
 
     switch (message) {
         case '!cafemaker':
