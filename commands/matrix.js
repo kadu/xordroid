@@ -11,7 +11,6 @@ exports.default = (client, obs, mqtt, messages) => {
       case '!matrix':
         let fullMessage = message.replace("!matrix ","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
         messages.push(fullMessage);
-        // mqtt.publish("xordroid/message", fullMessage);
         break;
       default:
         break;
