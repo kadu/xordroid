@@ -28,7 +28,6 @@ async function playTTS(message) {
   const writeFile = util.promisify(fs.writeFile);
   await writeFile('output.mp3', response.audioContent, 'binary');
   sound.play(`${__dirname}\\output.mp3`).then((response) => {
-    console.log("done");
     isPlayingTTS = false;
   }).catch((error) => {
     isPlayingTTS = false;
@@ -135,56 +134,56 @@ const client = new tmi.Client({
   channels: TWITCH_CHANNEL_NAME
 });
 
-function parse_commands(raw_commands, username) {
-	if(raw_commands[0] === "!comandos"||raw_commands[0] === "!help"| raw_commands[0] === "!ajuda") {
-		client.say(client.channels[0], '!led help | !eu | !camera help | !matrix <mensagem> | !donate | !github | !dica | !projetos | tem  mais mas você terá que descobrir :P');
-	}
-}
+// function parse_commands(raw_commands, username) {
+// 	if(raw_commands[0] === "!comandos"||raw_commands[0] === "!help"| raw_commands[0] === "!ajuda") {
+// 		client.say(client.channels[0], '!led help | !eu | !camera help | !matrix <mensagem> | !donate | !github | !dica | !projetos | tem  mais mas você terá que descobrir :P');
+// 	}
+// }
 
 
 
 client.on("join", (channel, username, self) => {
   if(self) {
     // client.say(channel,"Olá pessoas, eu sou o XORDroid, manda um !comandos ai no chat e veja minhas funcionalidades ;D ... e !projetos pra ver o que já fizemos");
-    client.say(channel, "To on!");
+    client.say(channel, "XORdroid na área, e aqui caiu é penalti!");
 	}
 });
 
-client.on('message', (channel, tags, message, self) => {
-  if(self) return;
-  const commands = [
-      "!led"
-    , "!mqtt"
-    , "!comandos"
-    , "!social"
-    , "!eu"
-    , "!camera"
-    , "!tela"
-    , "!proto"
-    , "!webcam"
-    , "!youtube"
-    , "!instagram"
-    , "!github"
-    , "!teste"
-    , "!matrix"
-    , "!donate"
-    , "!xordroid"
-    , "!streamdeckble"
-    , "!streamdeck"
-    , "!gatekeeperiot"
-    , "!gatekeeper"
-    , "!projetos"
-    , "!projects"
-    , "!ajuda"
-    , "!help"
-  ];
-  message_parse = message.split(" "); // split message
-  // verificar se só o primeiro é o comando
-	if(commands.includes(message_parse[0])) { // has commands on message
-		parse_commands(message_parse, tags.username);
-		return;
-	}
-});
+// client.on('message', (channel, tags, message, self) => {
+//   if(self) return;
+//   const commands = [
+//       "!led"
+//     , "!mqtt"
+//     , "!comandos"
+//     , "!social"
+//     , "!eu"
+//     , "!camera"
+//     , "!tela"
+//     , "!proto"
+//     , "!webcam"
+//     , "!youtube"
+//     , "!instagram"
+//     , "!github"
+//     , "!teste"
+//     , "!matrix"
+//     , "!donate"
+//     , "!xordroid"
+//     , "!streamdeckble"
+//     , "!streamdeck"
+//     , "!gatekeeperiot"
+//     , "!gatekeeper"
+//     , "!projetos"
+//     , "!projects"
+//     , "!ajuda"
+//     , "!help"
+//   ];
+//   message_parse = message.split(" "); // split message
+//   // verificar se só o primeiro é o comando
+// 	if(commands.includes(message_parse[0])) { // has commands on message
+// 		parse_commands(message_parse, tags.username);
+// 		return;
+// 	}
+// });
 
 client.connect();
 
