@@ -1,5 +1,5 @@
 const changeScenes = require("./changeScenes");
-var player = require('play-sound')(opts = {});
+const sound = require("sound-play");
 
 function randomInt(min, max) {
 	return min + Math.floor((max - min) * Math.random());
@@ -26,8 +26,9 @@ exports.default = (client, obs, mqtt, messages) => {
           mqtt.publish("wled/158690", "ON");
           mqtt.publish("wled/158690/api", "FX=90&SN=1");
           messages.push(`Valeu ae @${sendedBy}`);
-          player.play(`commands/audio/rojoes/firework0${randomInt(1,4)}.wav`, function(err){
-            if (err) throw err
+          sound.play(`commands/audio/rojoes/firework0${randomInt(1,4)}.wav`).then((response) => {
+          }).catch((error) => {
+            console.error(error);
           });
           changeScenes.change(client, obs, mqtt, "webcam");
           try {
