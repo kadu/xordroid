@@ -10,12 +10,12 @@ exports.default = (client, obs, mqtt, messages) => {
                     `Veja a lista de projetos: ->
                     !xordroid (eu mesmo, o bot),
                     !streamdeck (hello world dos makers na twitch.tv),
-                    !gatekeeper (o porteiro)
-                    !pcb_natal (Enfeite de arvore de natal)
-                    !ledmatrix (Relógio que mostra mensagens)
-                    !tts - !pttts e !entts (Mandeiras de fazer o google falar com o streamer)
-                    !ytcount (Mostra qtde de pessoas inscritas no canal do youtube)
-                    !piada - !joke (Contador de piadas)
+                    !gatekeeper (o porteiro),
+                    !pcb_natal (Enfeite de arvore de natal),
+                    !ledmatrix (Relógio que mostra mensagens),
+                    !tts - !pttts e !entts (Mandeiras de fazer o google falar com o streamer),
+                    !ytcount (Mostra qtde de pessoas inscritas no canal do youtube),
+                    !piada - !joke (Contador de piadas),
                     !dica - !tocansado (Dicas do que fazer nos momentos "boring" da vida)
                     `,
               );
@@ -31,10 +31,7 @@ exports.default = (client, obs, mqtt, messages) => {
               break;
             case '!streamdeckble':
             case '!streamdeck':
-              client.say(
-                  target,
-                  `Nosso StreamDeck ficou bem massa, da uma olhada aqui ó https://github.com/kadu/arduino_stream_deck`,
-              );
+              client.say(target,`Nosso StreamDeck ficou bem massa, da uma olhada aqui ó https://github.com/kadu/arduino_stream_deck`);
               break;
             case '!porteiro':
             case '!porteiroiot':
