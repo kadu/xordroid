@@ -13,7 +13,8 @@ const util = require('util');
 
 
 const clienttts = new textToSpeech.TextToSpeechClient();
-async function quickStart(message) {
+async function playTTS(message) {
+  isPlayingTTS = true;
   const text = message.msg;
   const inputType = message.inputType;
 
@@ -26,7 +27,13 @@ async function quickStart(message) {
   const [response] = await clienttts.synthesizeSpeech(request);
   const writeFile = util.promisify(fs.writeFile);
   await writeFile('output.mp3', response.audioContent, 'binary');
-  sound.play(`${__dirname}\\output.mp3`);
+  sound.play(`${__dirname}\\output.mp3`).then((response) => {
+    console.log("done");
+    isPlayingTTS = false;
+  }).catch((error) => {
+    isPlayingTTS = false;
+    console.error(error);
+  });
 }
 
 mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true});
@@ -71,6 +78,7 @@ var messages = [];
 var commandQueue = [];
 var ttsQueue = [];
 var timerIsOn = true;
+var isPlayingTTS = false;
 const mqtt = MQTT.connect(mqtt_options);
 
 mqtt.on('connect', function () {
@@ -104,9 +112,9 @@ mqtt.on('connect', function () {
   }, 1500);
 
   setInterval(async () => {
-    if(ttsQueue.length > 0) {
+    if((ttsQueue.length > 0) && (!isPlayingTTS)) {
       let tts = ttsQueue.shift();
-      await quickStart(tts);
+      await playTTS(tts);
     }
   }, 2500);
 });
