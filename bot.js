@@ -36,9 +36,11 @@ async function playTTS(message) {
   });
 }
 
-mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true});
+mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true}).catch(error => {
+  console.log("Erro no mongoose.connect");
+});
+
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("Papai ta ON");
 });
@@ -49,12 +51,6 @@ const botSchema = new mongoose.Schema({
 });
 
 const botDB = mongoose.model('BOT', botSchema);
-
-// const silence = new botDB({ userid: 'Silence 17', points: 10 });
-// console.log("******************");
-// console.log(silence.userid); // 'Silence'
-// console.log("******************");
-// silence.save();
 
 dotenv.config();
 
@@ -135,56 +131,11 @@ const client = new tmi.Client({
   channels: TWITCH_CHANNEL_NAME
 });
 
-// function parse_commands(raw_commands, username) {
-// 	if(raw_commands[0] === "!comandos"||raw_commands[0] === "!help"| raw_commands[0] === "!ajuda") {
-// 		client.say(client.channels[0], '!led help | !eu | !camera help | !matrix <mensagem> | !donate | !github | !dica | !projetos | tem  mais mas você terá que descobrir :P');
-// 	}
-// }
-
-
-
 client.on("join", (channel, username, self) => {
   if(self) {
-    // client.say(channel,"Olá pessoas, eu sou o XORDroid, manda um !comandos ai no chat e veja minhas funcionalidades ;D ... e !projetos pra ver o que já fizemos");
     client.say(channel, "XORdroid na área, e aqui caiu é penalti!");
 	}
 });
-
-// client.on('message', (channel, tags, message, self) => {
-//   if(self) return;
-//   const commands = [
-//       "!led"
-//     , "!mqtt"
-//     , "!comandos"
-//     , "!social"
-//     , "!eu"
-//     , "!camera"
-//     , "!tela"
-//     , "!proto"
-//     , "!webcam"
-//     , "!youtube"
-//     , "!instagram"
-//     , "!github"
-//     , "!teste"
-//     , "!matrix"
-//     , "!donate"
-//     , "!xordroid"
-//     , "!streamdeckble"
-//     , "!streamdeck"
-//     , "!gatekeeperiot"
-//     , "!gatekeeper"
-//     , "!projetos"
-//     , "!projects"
-//     , "!ajuda"
-//     , "!help"
-//   ];
-//   message_parse = message.split(" "); // split message
-//   // verificar se só o primeiro é o comando
-// 	if(commands.includes(message_parse[0])) { // has commands on message
-// 		parse_commands(message_parse, tags.username);
-// 		return;
-// 	}
-// });
 
 client.connect();
 
