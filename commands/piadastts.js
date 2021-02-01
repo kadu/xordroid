@@ -3,8 +3,6 @@ const getJSON = bent('json');
 const jokeAPIURL = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
 const piadaAPIURL = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
 
-
-
 exports.default = (client, obs, mqtt, messages, botDB, commandQueue, ttsQueue) => {
     client.on('message', async (target, context, message, isBot) => {
         if (isBot) return;
