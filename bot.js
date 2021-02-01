@@ -26,8 +26,9 @@ async function playTTS(message) {
 
   const [response] = await clienttts.synthesizeSpeech(request);
   const writeFile = util.promisify(fs.writeFile);
-  await writeFile('output.mp3', response.audioContent, 'binary');
-  sound.play(`${__dirname}\\output.mp3`).then((response) => {
+  const ttsTempFile = `${__dirname}\\temp\\output.mp3`;
+  await writeFile(ttsTempFile, response.audioContent, 'binary');
+  sound.play(ttsTempFile).then((response) => {
     isPlayingTTS = false;
   }).catch((error) => {
     isPlayingTTS = false;
