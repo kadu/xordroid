@@ -14,9 +14,6 @@ exports.default = (client, obs, mqtt, messages) => {
   client.on('message', async (target, context, message, isBot) => {
       if (isBot) return;
 
-      // console.log("**context", context);
-      // console.log("**target", target);
-
       let parsedMessage = message.split(" ");
       if(parsedMessage[0] === "!led") {
         if(parsedMessage[1] === "ajuda") {
@@ -56,19 +53,6 @@ exports.default = (client, obs, mqtt, messages) => {
             mqtt.publish("wled/158690", "ON");
             mqtt.publish("wled/158690/col", sendcolor);
           }
-
-          // let isColor = /^#[0-9A-F]{6}$/i.test(parsedMessage[2]);
-
-
-          // if(!isColor) {
-          //   let someNamedColor = namedColors.find(color => color.name === capitalize2(parsedMessage[2]));
-          //   if(typeof someNamedColor !== 'undefined') {
-          //   } else {
-          //   }
-          // } else {
-          //   mqtt.publish("wled/158690", "ON");
-          //   mqtt.publish("wled/158690/col", parsedMessage[2]);
-          // }
         }
       }
   });
