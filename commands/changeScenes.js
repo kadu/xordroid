@@ -54,7 +54,7 @@ module.exports = {
     obs.send('SetCurrentScene', {
       'scene-name': newScene
     }).catch(error => {
-      console.log("erro no setcurrentschene", error);
+      console.log("*ChangeScenes* erro no setcurrentschene", error);
     });
 
   }
