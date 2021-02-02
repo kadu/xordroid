@@ -46,6 +46,12 @@ exports.default = (client, obs, mqtt, messages) => {
             case '!donate':
               client.say(target,`Você pode me ajudar a ter uma "super" cnc para fazer plaquinhas em casa, só mandar um "salve" via picpay pra @kadubr, se conseguirmos a maquineta, faremos lives e videos para o canal (aqui e na vermelhinha) mostrando como usar pra fazer as plaquinhas ;) - Valeu Grandão! (link da cnc: https://bit.ly/cncDU), se preferir, pode usar o PIX -> !pix pra pegar o QRCode `);
               break;
+            case '!campainha':
+              client.say(target,`Eu fiz um hack na minha campainha para as notificações aparecerem na automação ->  https://www.kaduzi.us/o-dia-que-eu-fiz-um-hack-na-minha-campainha/`);
+              break;
+            case '!timelapse':
+              client.say(target,`Veja como construir um timelapse usando ESP32Cam -> https://www.kaduzi.us/esp32cam-timelapse-nodejs-server/`);
+              break;
             default:
                 break;
         }
