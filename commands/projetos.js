@@ -33,6 +33,9 @@ exports.default = (client, obs, mqtt, messages) => {
             case '!streamdeck':
               client.say(target,`Nosso StreamDeck ficou bem massa, da uma olhada aqui ó https://github.com/kadu/arduino_stream_deck`);
               break;
+            case '!streamdeck-catalog':
+              client.say(target,`Veja uma lista de Streamdecks feito pelos makers https://github.com/kadu/streamdeck-catalog`);
+              break;
             case '!porteiro':
             case '!porteiroiot':
             case '!gatekeeperiot':
