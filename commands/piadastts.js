@@ -37,11 +37,11 @@ exports.default = (client, obs, mqtt, messages, botDB, commandQueue, ttsQueue) =
               ttsQueue.push( {'msg': msgpiada, 'lang': 'en','inputType': 'text'});
               break;
 
-            case '!piada':
-              response = await getJSON(piadaAPIURL);
-              msgpiada = `<speak>${response.pergunta}<break time="1400ms"/>${response.resposta}<audio src="${getFunAudio()}"/></speak>`;
-              ttsQueue.push( {'msg': msgpiada, 'lang': 'pt-BR', 'inputType': 'ssml'});
-              break;
+            // case '!piada':
+            //   response = await getJSON(piadaAPIURL);
+            //   msgpiada = `<speak>${response.pergunta}<break time="1400ms"/>${response.resposta}<audio src="${getFunAudio()}"/></speak>`;
+            //   ttsQueue.push( {'msg': msgpiada, 'lang': 'pt-BR', 'inputType': 'ssml'});
+            //   break;
             default:
                 break;
         }
