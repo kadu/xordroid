@@ -75,6 +75,7 @@ var commandQueue = [];
 var ttsQueue = [];
 var timerIsOn = true;
 var isPlayingTTS = false;
+var isStreamON = false;
 const mqtt = MQTT.connect(mqtt_options);
 
 mqtt.on('connect', function () {
@@ -139,6 +140,38 @@ client.on("join", (channel, username, self) => {
 });
 
 client.connect();
+
+obs.on("StreamStarted", (data) => {
+  isStreamON = true;
+});
+
+obs.on("StreamStopped", (data) => {
+  isStreamON = false;
+});
+
+setInterval(() => {
+  if(isStreamON) {
+    client.commercial("kaduzius",60).then((data) => {
+      console.log("***** COMERCIAL ****");
+      console.log(data);
+
+
+      sound.play(`${__dirname}\\audio\\alarme\\a01.mp3`).then((response) => {
+        isPlayingTTS = false;
+      }).catch((error) => {
+        isPlayingTTS = false;
+        console.error(error);
+      });
+
+
+    })
+    .catch((err) => {
+      console.log("*****ERRO COMERCIAL ****");
+      console.log(err);
+    });
+  }
+}, 3600000);
+
 
 readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
