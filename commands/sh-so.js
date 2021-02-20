@@ -85,7 +85,9 @@ exports.default = (client, obs, mqtt, messages) => {
     'mr_eng_tails',
     'jnthas',
     'Rattones',
-    'AdielSeffrin'
+    'AdielSeffrin',
+    'grumpy_lele',
+    'boirods'
   ];
 
     if(streamers.includes(username)) {
