@@ -10,6 +10,8 @@ const sound = require("sound-play");
 const textToSpeech = require('@google-cloud/text-to-speech');
 const fs = require('fs');
 const util = require('util');
+const chalk = require('chalk');
+
 
 
 const clienttts = new textToSpeech.TextToSpeechClient();
@@ -142,17 +144,19 @@ client.on("join", (channel, username, self) => {
 client.connect();
 
 obs.on("StreamStarted", (data) => {
+  console.log(chalk.blueBright("Stream is ON LINE"));
   isStreamON = true;
 });
 
 obs.on("StreamStopped", (data) => {
+  console.log(chalk.blueBright("Stream is OFFLINE"));
   isStreamON = false;
 });
 
 setInterval(() => {
   if(isStreamON) {
     client.commercial("kaduzius",60).then((data) => {
-      console.log("***** COMERCIAL ****");
+      console.log(chalk.redBright("***** COMERCIAL ****"));
       console.log(data);
 
 
