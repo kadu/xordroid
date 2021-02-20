@@ -28,7 +28,7 @@ exports.default = (client, obs, mqtt, messages) => {
         break;
 
       case '!discord':
-        client.say(target, 'https://discord.gg/wmmTKHeHDJ');
+        client.say(target, 'https://discord.gg/qJMjBEK6km');
         break;
 
       case '!iotstreamers':
@@ -41,6 +41,14 @@ exports.default = (client, obs, mqtt, messages) => {
 
       case '!pix':
         client.say(target, 'Donate com PIX -> http://www.kaduzi.us/pix');
+        break;
+
+      case '!arduinoday':
+        client.say(target, 'Arduino Day 2021 -> https://guildamaker.com/arduinoday2021/');
+        break;
+
+      case '!guilda':
+        client.say(target, 'Arduino Day 2021 -> https://guildamaker.com/');
         break;
 
       default:
