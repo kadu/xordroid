@@ -52,6 +52,12 @@ exports.default = (client, obs, mqtt, messages) => {
             case '!timelapse':
               client.say(target,`Veja como construir um timelapse usando ESP32Cam -> https://www.kaduzi.us/esp32cam-timelapse-nodejs-server/`);
               break;
+
+              case '!smartwashmachine':
+              case '!maquinadelavar':
+              case '!washmachine':
+                client.say(target,`Como deixar sua maquina de lavar inteligente -> https://github.com/kadu/smartwashmachine`);
+                break;
             default:
                 break;
         }
