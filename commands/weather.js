@@ -25,7 +25,7 @@ exports.default = (client, obs, mqtt, messages, botDB, commandQueue, ttsQueue) =
                 let response = "";
                 try {
                   response = await getJSON(`${WURL}${cidade}&appid=${openWeatherKey}`);
-                  console.log(response);
+                  // console.log(response);
                   client.say(
                       target,
                       `${response.name} temos ${response.main.temp}ºC com sensação térmica de ${response.main.feels_like}ºC. ${response.weather[0].description}`,
