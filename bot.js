@@ -23,12 +23,12 @@ async function playTTS(message) {
   const request = {
     input: {[inputType]: text},
     voice: {languageCode: message.lang, ssmlGender: 'NEUTRAL'},
-    audioConfig: {audioEncoding: 'MP3'},
+    audioConfig: {audioEncoding: 'LINEAR16'},
   };
 
   const [response] = await clienttts.synthesizeSpeech(request);
   const writeFile = util.promisify(fs.writeFile);
-  const ttsTempFile = `${__dirname}\\temp\\output.mp3`;
+  const ttsTempFile = `${__dirname}\\temp\\output.m4a`;
   await writeFile(ttsTempFile, response.audioContent, 'binary');
   sound.play(ttsTempFile).then((response) => {
     isPlayingTTS = false;
