@@ -6,10 +6,10 @@ exports.default = (client, obs, mqtt, messages) => {
 
     if(context.username !== 'kaduzius') return;
 
-    let parsedMessage = message.split(" ");
+    const parsedMessage = message.split(" ");
     switch (parsedMessage[0]) {
       case '!matrix':
-        let fullMessage = message.replace("!matrix ","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        const fullMessage = message.replace("!matrix ","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
         messages.push(fullMessage);
         break;
       default:
@@ -19,7 +19,7 @@ exports.default = (client, obs, mqtt, messages) => {
 
   client.on("raw_message", async (messageCloned, message) => {
     if(message.tags['custom-reward-id'] === CP_Matrix) {
-      let fullMessage = message.params[1].normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      const fullMessage = message.params[1].normalize('NFD').replace(/[\u0300-\u036f]/g, "");
       messages.push(fullMessage);
     }
   });
