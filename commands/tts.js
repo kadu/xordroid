@@ -1,9 +1,11 @@
-exports.default = (client, obs, mqtt, messages, botDB, commandQueue, ttsQueue) => {
+exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
     client.on('message', (target, context, message, isBot) => {
         if (isBot) return;
         let parsedMessage = message.split(" ");
 
         // if(parsedMessage[0] === '!tts' || parsedMessage[0] === '!entts' || parsedMessage[0] === '!pttts' || parsedMessage[0] === '!frtts') {
+          // client.say(target, 'tts desativado!');
+          // break;
         //   return;
         // }
 

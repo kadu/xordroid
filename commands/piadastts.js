@@ -19,7 +19,7 @@ function getFunAudio() {
 
 
 
-exports.default = (client, obs, mqtt, messages, botDB, commandQueue, ttsQueue) => {
+exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
     client.on('message', async (target, context, message, isBot) => {
         if (isBot) return;
 

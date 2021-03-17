@@ -1,6 +1,6 @@
 const CP_Carrinho = '41c23fbb-b8ab-4a41-b782-8652bf4723c0';
 
-exports.default = (client, obs, mqtt, messages, botDB, commandQueue) => {
+exports.default = (client, obs, mqtt, messages, commandQueue) => {
     client.on('message', (target, context, message, isBot) => {
         if (isBot) return;
 

@@ -1,12 +1,5 @@
-const mongoose = require('mongoose');
 
-const botSchema = new mongoose.Schema({
-  userid: String,
-  points: Number
-});
-
-
-exports.default = (client, obs, mqtt, messages, botDB) => {
+exports.default = (client, obs, mqtt, messages) => {
     client.on('message', async (target, context, message, isBot) => {
         if (isBot) return;
 
@@ -17,16 +10,16 @@ exports.default = (client, obs, mqtt, messages, botDB) => {
                     `Valeu por testar o mongoDB!`,
                 );
 
-                const silence = new botDB({ userid: 'To na mongoTest', points: 10 });
-                console.log("******************");
-                console.log(silence.userid); // 'Silence'
-                console.log("******************");
-                silence.save();
+                // const silence = new botDB({ userid: 'To na mongoTest', points: 10 });
+                // console.log("******************");
+                // console.log(silence.userid); // 'Silence'
+                // console.log("******************");
+                // silence.save();
                 break;
 
             case '!getmongo':
-              let x = await botDB.find({"userid" : "Silence 17"}).exec();
-              console.log(x[0]._doc.userid);
+              // let x = await botDB.find({"userid" : "Silence 17"}).exec();
+              // console.log(x[0]._doc.userid);
 
               break;
             default:
