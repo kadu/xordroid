@@ -5,14 +5,13 @@ const obs = new OBSWebSocket();
 const tmi = require('tmi.js');
 const MQTT = require("mqtt");
 const { Console } = require('console');
-const mongoose = require('mongoose');
 const sound = require("sound-play");
 const textToSpeech = require('@google-cloud/text-to-speech');
 const fs = require('fs');
 const util = require('util');
 const chalk = require('chalk');
-
-
+const express = require('express');
+const app = express();
 
 const clienttts = new textToSpeech.TextToSpeechClient();
 async function playTTS(message) {
@@ -37,22 +36,6 @@ async function playTTS(message) {
     console.error(error);
   });
 }
-
-mongoose.connect('mongodb://xordroid_points:TbfUhRuxEvqvA3j4@localhost:27018/admin', {useNewUrlParser: true}).catch(error => {
-  console.log("Erro no mongoose.connect");
-});
-
-const db = mongoose.connection;
-db.once('open', function() {
-  console.log("Papai ta ON");
-});
-
-const botSchema = new mongoose.Schema({
-  userid: String,
-  points: Number
-});
-
-const botDB = mongoose.model('BOT', botSchema);
 
 dotenv.config();
 
@@ -180,5 +163,16 @@ setInterval(() => {
 readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
   .forEach((file) => {
-		require(`./commands/${file}`).default(client, obs, mqtt, messages, botDB, commandQueue, ttsQueue);
+		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue);
   });
+
+
+// #webserver
+app.use('/static', express.static('public'));
+app.get('/api', (req, res) => {
+  // chamada do "tempo"
+});
+
+app.listen(3000, () => {
+  console.log(`Example app listening at http://localhost:${3000}`)
+});
