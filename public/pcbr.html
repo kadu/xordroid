@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>mapa Leaflet</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="docs/images/favicon.ico"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""
+    ></script>
+  </head>
+  <body>
+    <div id="mapid" style="width: 600px; height: 400px"></div>
+    <script>
+      // var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+      // 	maxZoom: 20,
+      // 	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+      // });
+      var map = L.map("mapid").setView(
+        [-14.859850400601037, -43.59375000000001],
+        4
+      );
+
+      L.tileLayer(
+        "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
+        {
+          maxZoom: 20,
+          attribution:
+            '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+        }
+      ).addTo(map);
+
+      map.on("zoomstart", function (e) {
+        console.log("ZOOMSTART", e);
+      });
+      map.on("zoomend", function (e) {
+        console.log("ZOOMEND", e);
+      });
+      map.on("click", function (e) {
+        map.setView([e.latlng.lat, e.latlng.lng], 12);
+        let radius = 10;
+        L.marker(e.latlng)
+          .addTo(map)
+          .bindPopup("You are within " + radius + " meters from this point")
+          .openPopup();
+
+        L.circle(e.latlng, radius).addTo(map);
+      });
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+      async function demo() {
+        let maps = [
+          { cidade: "Abadia de Goiás", uf: "GO", lat: -16.7573, lng: -49.4412 },
+          {
+            cidade: "Abadia dos Dourados",
+            uf: "MG",
+            lat: -18.4831,
+            lng: -47.3916,
+          },
+          { cidade: "Abadiânia", uf: "GO", lat: -16.197, lng: -48.7057 },
+          { cidade: "Abaeté", uf: "MG", lat: -19.1551, lng: -45.4444 },
+          { cidade: "Porto Alegre", uf: "RS", lat: -30.0318, lng: -51.2065 },
+        ];
+
+        for (const a of maps) {
+          await sleep(800);
+          map.setView([a.lat, a.lng], 11);
+          var marker = L.marker([a.lat, a.lng]).addTo(map);
+          await sleep(800);
+        }
+
+        await sleep(200);
+
+        map.setView([-14.859850400601037, -43.59375000000001], 4);
+      }
+      demo();
+    </script>
+  </body>
+</html>
