@@ -2,6 +2,7 @@ exports.default = (client, obs, mqtt, messages) => {
   let showed = [];
 
   client.on('join', (channel, username, self) => {
+    return;
     let streamers = [
     'daniel_dev',
     'webmat1',
@@ -88,10 +89,10 @@ exports.default = (client, obs, mqtt, messages) => {
     'adielseffrin',
     'grumpy_lele',
     'boirods',
-    'guiolopes'
+    'guiolopes',
+    'vcwild',
+    'dunossauro'
   ];
-
-  console.log(username);
 
     if(streamers.includes(username)) {
       if(!showed.includes(username)) {
