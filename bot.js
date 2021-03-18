@@ -11,7 +11,13 @@ const fs = require('fs');
 const util = require('util');
 const chalk = require('chalk');
 const express = require('express');
-const app = express();
+// const app = express();
+// const http = require('http').Server(app);
+// const io = require('socket.io')(http);
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const dbweather = require("./commands/weather");
 
 const clienttts = new textToSpeech.TextToSpeechClient();
 async function playTTS(message) {
@@ -169,8 +175,12 @@ readdirSync(`${__dirname}/commands`)
 
 // #webserver
 app.use('/static', express.static('public'));
-app.get('/api', (req, res) => {
-  // chamada do "tempo"
+app.get('/api', async (req, res) => {
+  return res.json(await dbweather.dbweather());
+});
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
 });
 
 app.listen(3000, () => {

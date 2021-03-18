@@ -81,6 +81,16 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
     });
 };
 
+exports.dbweather = async () => {
+  result = await db.all('select * from weathermap w where DATE("timestamp","-3 hour") = DATE("now","-3 hour")',[], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+  });
+
+  return (result);
+}
+
 
 process.on('SIGINT', function() {
   console.log("Caught interrupt signal");

@@ -28,6 +28,10 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
           let fullMessage = context["display-name"] + " disse: " + message.replace("!frtts ","");
           ttsQueue.push( {'msg': fullMessage, 'lang': 'fr-FR','inputType': 'text'});
         }
+
+        if(parsedMessage[0] === '!rutts') {
+          let fullMessage = context["display-name"] + " disse: " + message.replace("!frtts ","");
+          ttsQueue.push( {'msg': fullMessage, 'lang': 'ru-RU','inputType': 'text'});
+        }
     });
 };
-
