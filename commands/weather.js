@@ -6,6 +6,18 @@ const sqlite = require('sqlite');
 const WURL = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lang=pt_br&q=';
 var db = null;
 
+
+function test(send) {
+  send(
+    'all',
+    'newcity',
+    {
+      cool: true,
+      content: 'This is a message sent ' + new Date().toLocaleTimeString()
+    }
+  );
+}
+
 async function createDB() {
   try {
     db = await sqlite.open({ filename: './weathermap.db', driver: sqlite3.Database });
@@ -32,7 +44,7 @@ createDB();
 dotenv.config();
 openWeatherKey = process.env.OPENWEATER_KEY;
 
-exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
+exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) => {
     client.on('message', async (target, context, message, isBot) => {
         if (isBot) return;
 
@@ -70,6 +82,9 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
                       target,
                       `${city}(${country}) temos ${temp}ºC com sensação térmica de ${feels_like}ºC. ${temp_descr}`,
                   );
+
+                  test(send);
+
                 } catch (error) {
                   client.say(target, 'Não consegui achar sua cidade :/');
                   console.log(error);

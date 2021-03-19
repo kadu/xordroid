@@ -11,13 +11,9 @@ const fs = require('fs');
 const util = require('util');
 const chalk = require('chalk');
 const express = require('express');
-// const app = express();
-// const http = require('http').Server(app);
-// const io = require('socket.io')(http);
-const app = require('express')();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const app = express();
 const dbweather = require("./commands/weather");
+const sse = require('easy-server-sent-events');
 
 const clienttts = new textToSpeech.TextToSpeechClient();
 async function playTTS(message) {
@@ -165,22 +161,27 @@ setInterval(() => {
   }
 }, 3600000);
 
+const options = {
+  endpoint: '/api/sse',
+  script: '/sse.js'
+};
+const {SSE, send, openSessions, openConnections} = sse(options);
+
 
 readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
   .forEach((file) => {
-		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue);
+		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
   });
 
+
+
+app.use(SSE);
 
 // #webserver
 app.use('/static', express.static('public'));
 app.get('/api', async (req, res) => {
   return res.json(await dbweather.dbweather());
-});
-
-io.on('connection', (socket) => {
-  console.log('a user connected');
 });
 
 app.listen(3000, () => {

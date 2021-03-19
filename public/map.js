@@ -1,4 +1,5 @@
-const data = fetch('http://localhost:3000/api/')
+function dataUpdate() {
+  fetch('http://localhost:3000/api/')
   .then((response) => response.json())
   .then((json) => {
     json.map((row) =>{
@@ -6,6 +7,7 @@ const data = fetch('http://localhost:3000/api/')
       .bindPopup(`<b>${row.city}</b><br />${row.temp}ºC`).openPopup();
     });
   });
+}
 
 
 var mymap = L.map('mapid').setView([-22.564848,-47.4094343], 3);
@@ -30,4 +32,11 @@ function onMapClick(e) {
 
 mymap.on('click', onMapClick);
 
-var socket = io();
+const sse = new SSE('/api/sse');
+
+sse.listen('newcity', (data) => {
+  console.log('message', data);
+  dataUpdate();
+});
+
+
