@@ -20,7 +20,7 @@ function test(send) {
 
 async function createDB() {
   try {
-    db = await sqlite.open({ filename: './weathermap.db', driver: sqlite3.Database });
+    db = await sqlite.open({ filename: './databases/xordroid.db', driver: sqlite3.Database });
     await db.run(`CREATE TABLE IF NOT EXISTS weathermap ( id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, video_time TEXT, username TEXT, city TEXT, lat TEXT, long TEXT, temp TEXT, temp_feelslike TEXT)`);
   } catch (error) {
     console.error(error);

@@ -4,7 +4,7 @@ const sqlite = require('sqlite');
 
 async function createDB() {
   try {
-    db = await sqlite.open({ filename: './sh-so.db', driver: sqlite3.Database });
+    db = await sqlite.open({ filename: './databases/xordroid.db', driver: sqlite3.Database });
     await db.run(`CREATE TABLE IF NOT EXISTS sh_so ( id INTEGER PRIMARY KEY AUTOINCREMENT, streamer TEXT NOT NULL UNIQUE, added_by TEXT, added_date DATETIME DEFAULT CURRENT_TIMESTAMP, last_showed DATETIME)`);
   } catch (error) {
     console.error(error);
