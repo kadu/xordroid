@@ -1,108 +1,70 @@
+const sqlite3 = require('sqlite3').verbose();
+const { response } = require('express');
+const sqlite = require('sqlite');
+
+async function createDB() {
+  try {
+    db = await sqlite.open({ filename: './sh-so.db', driver: sqlite3.Database });
+    await db.run(`CREATE TABLE IF NOT EXISTS sh_so ( id INTEGER PRIMARY KEY AUTOINCREMENT, streamer TEXT NOT NULL UNIQUE, added_by TEXT, added_date DATETIME DEFAULT CURRENT_TIMESTAMP, last_showed DATETIME)`);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+createDB();
+
 exports.default = (client, obs, mqtt, messages) => {
   let showed = [];
 
-  client.on('join', (channel, username, self) => {
-    return;
-    let streamers = [
-    'daniel_dev',
-    'webmat1',
-    'pokemaobr',
-    'tearing5',
-    'xtecna',
-    'dornellestv',
-    'henriquevilelamusic',
-    'project_juan',
-    'pachicodes',
-    'mechanicallydev',
-    'corujaodev',
-    'julialabs',
-    'chicocodes',
-    'davibusanello',
-    'cafecodes',
-    'princess_league',
-    'pixlrose',
-    'maikemota',
-    'jpbrab0',
-    'levxyca',
-    'chicaocodes',
-    'rostyxz',
-    'edersondeveloper',
-    'zerotoherodev',
-    'cabracast',
-    'baldengineer',
-    'griloviscky',
-    'bittoin',
-    'canturil',
-    'railanepassos',
-    'programadorbinario',
-    'kastr0walker',
-    'stormgirlbr',
-    'bgfow',
-    'victorzonta',
-    'carpa_flamejante',
-    'racerxdl',
-    'bedabliu',
-    'carol_de_abreu',
-    'arig4m3r',
-    'devgiordane',
-    'alecams',
-    'leitche',
-    'paulobeckman',
-    'tonhocodes',
-    'morgiovanelli',
-    'escslabtech',
-    'altthabs',
-    'wesleylab',
-    'torrevorpal',
-    'fer2easy',
-    'guridarth',
-    'rafabandoni',
-    'casadodev',
-    'xdidadev',
-    'profbrunolopes',
-    'devnelson_',
-    'guina_o_artesao',
-    'tairritadotio',
-    'indice_do_conhecimento',
-    'vitorbgs',
-    '8bitstore',
-    'vitthin',
-    'cabracast',
-    'johnsjohnshell',
-    'filipesvieira',
-    'dmaneiro88',
-    'player_dbr',
-    'purplepizza92',
-    'punkdodevops',
-    'canaldodrogs',
-    'bug_elseif',
-    'jeylab_robotica',
-    'thiagohofmeister',
-    'mercuriogurgel',
-    'sampaioleal',
-    'aquelenoia',
-    'grandedev',
-    'wesleycsj',
-    'mr_eng_tails',
-    'jnthas',
-    'rattones',
-    'adielseffrin',
-    'grumpy_lele',
-    'boirods',
-    'guiolopes',
-    'vcwild',
-    'dunossauro'
-  ];
+  client.on('message', async (target, context, message, isBot) => {
+    if (isBot) return;
+    if(context.badges == null)  return;
 
-    if(streamers.includes(username)) {
-      if(!showed.includes(username)) {
-        if(messages.length <= 2) {
-          messages.push(`Ola ${username}!`);
-          client.say(client.channels[0], `!sh-so @${username}`);
-          showed.push(username);
+    if(context.mod == false && context.badges.broadcaster != '1') return;
+
+    let parsedMessage = message.split(" ");
+
+    switch (parsedMessage[0]) {
+      case '!add-streamer':
+      case '!streamer':
+        try {
+
+          if(typeof parsedMessage[1] == 'undefined') return; // forgot to send the streamer
+
+          await db.run("INSERT INTO sh_so (streamer, added_by)  VALUES(?,?)", [parsedMessage[1].toLowerCase().replace('@',''), context.username]);
+        } catch (error) {
+          console.log(`Error on add-streamer ${parsedMessage[1]} by ${context.username}`);
+          console.log(error);
+        }
+        break;
+      default:
+        break;
+    }
+  });
+
+  client.on('join', async (channel, username, self) => {
+    async function shShowed(streamer) {
+      const sql = 'SELECT ss.streamer,DATE(ss2.last_showed,"-3 hour") == DATE(CURRENT_TIMESTAMP,"-3 hour") as "showed" FROM sh_so ss LEFT JOIN sh_so ss2 where ss.streamer = ?  AND ss.streamer = ss2.streamer';
+      const params = [streamer];
+      const result = await db.get(sql, params, (err, row) => {
+        if (err) {
+          throw err;
+        }
+      });
+
+      if(typeof result != 'undefined') {
+        if(result.showed !== 1) {
+          db.run('UPDATE sh_so SET last_showed=CURRENT_TIMESTAMP WHERE streamer=?',[streamer]);
+          return false;
         }
       }
+      return true;
+    }
+
+    const mustShowStreamer = await shShowed(username);
+    if(!mustShowStreamer) {
+      messages.push(`Ola ${username}!`);
+      client.say(client.channels[0], `!sh-so @${username}`);
     }
   });
 };
-
