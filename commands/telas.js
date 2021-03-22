@@ -3,17 +3,22 @@ const changeScenes = require("./changeScenes");
 exports.default = (client, obs, mqtt, messages) => {
   let currentScene;
   let obsIsConnected;
+  let OBSFaultMessage = false;
 
   function obsConnection() {
     obs.connect()
       .then(() => {
         obsIsConnected = true;
         console.log("Finalmente, conectado no OBS");
+        OBSFaultMessage = false;
       })
       .catch(error => {
         var dt = new Date();
 
-        console.log("[" + dt.getHours() + ":" + dt.getMinutes() + "] Nao conseguiu conectar no OBS");
+        if(!OBSFaultMessage) {
+          console.log("[" + dt.getHours() + ":" + dt.getMinutes() + "] Nao conseguiu conectar no OBS");
+          OBSFaultMessage = true;
+        }
       });
   }
 
@@ -45,45 +50,6 @@ exports.default = (client, obs, mqtt, messages) => {
         console.log("Algo aconteceu aqui!");
       });
   });
-
-  /*
-  function changeScene(Scene) {
-    if(!["Esquerda + Protobord", "FullScreen", "Esquerda + Webcam"].includes(currentScene)) {
-      if(currentScene == "Obrigado") {
-        client.say(client.channels[0], "Valeu por acompanhar a live! Até a próxima!");
-      } else if(currentScene == "Ja volto") {
-        client.say(client.channels[0], "Eu estou aqui, mas não posso fazer isso agora ;)");
-      } else if(currentScene == "Abertura") {
-        client.say(client.channels[0], "Calma, já vamos começar! Apressado!!!");
-      } else {
-        client.say(client.channels[0], "Putz, não consigo mudar a cena agora, o @Kaduzius deve ter feito alguma meleca!");
-      }
-      return;
-    }
-
-    let newScene;
-
-    if(Scene == "proto") {
-      newScene = "Esquerda + Protobord";
-    }
-
-    if(Scene == "webcam") {
-      newScene = "FullScreen";
-    }
-
-    if(Scene == "tela") {
-      newScene = "Esquerda + Webcam";
-    }
-
-    try {
-      obs.send('SetCurrentScene', {
-        'scene-name': newScene
-      });
-    } catch (error) {
-      console.log("*TELAS.JS* erro no setcurrentschene", error);
-    }
-  }
-  */
 
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
