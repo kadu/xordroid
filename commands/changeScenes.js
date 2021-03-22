@@ -26,15 +26,6 @@ module.exports = {
 
   change: function (client, obs, mqtt, scene) {
     if(!["Esquerda + Protobord", "FullScreen", "Esquerda + Webcam"].includes(currentScene)) {
-      if(currentScene == "Obrigado") {
-        client.say(client.channels[0], "Valeu por acompanhar a live! Até a próxima e para de querer xeretar!");
-      } else if(currentScene == "Ja volto") {
-        client.say(client.channels[0], "Eu estou aqui, mas não posso fazer isso agora ;)");
-      } else if(currentScene == "Abertura") {
-        client.say(client.channels[0], "Calma, já vamos começar! Apressado!!!");
-      } else {
-        client.say(client.channels[0], "Putz, não consigo mudar a cena agora, o @Kaduzius deve ter feito alguma meleca!");
-      }
       return;
     }
 
