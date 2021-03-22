@@ -32,6 +32,13 @@ exports.default = (client, obs, mqtt, messages) => {
           if(typeof parsedMessage[1] == 'undefined') return; // forgot to send the streamer
           const streamer = parsedMessage[1].toLowerCase().replace('@','');
           await db.run("INSERT INTO sh_so (streamer, added_by)  VALUES(?,?)", [streamer, context.username]);
+          client.whisper(context.username, `Streamer added ${streamer}`)
+            .then((data)=> {
+              console.log(data);
+              console.log("mandou whisper");
+            }).catch((err) => {
+              console.log(`Deu erro no whisper do sh-so: ${err}`);
+            });
           console.log(`Streamer added ${streamer}`);
         } catch (error) {
           console.log(`Error on add-streamer ${parsedMessage[1]} by ${context.username}`);
