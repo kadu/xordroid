@@ -30,8 +30,9 @@ exports.default = (client, obs, mqtt, messages) => {
         try {
 
           if(typeof parsedMessage[1] == 'undefined') return; // forgot to send the streamer
-
-          await db.run("INSERT INTO sh_so (streamer, added_by)  VALUES(?,?)", [parsedMessage[1].toLowerCase().replace('@',''), context.username]);
+          const streamer = parsedMessage[1].toLowerCase().replace('@','');
+          await db.run("INSERT INTO sh_so (streamer, added_by)  VALUES(?,?)", [streamer, context.username]);
+          console.log(`Streamer added ${streamer}`);
         } catch (error) {
           console.log(`Error on add-streamer ${parsedMessage[1]} by ${context.username}`);
           console.log(error);
