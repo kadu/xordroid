@@ -1,0 +1,19 @@
+#weather {
+  color:#bbdefb;
+}
+
+#weather i{
+  margin: 0;
+}
+
+#weather p {
+  display: inline-block;
+  height: min-content;
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+  text-align: right;
+}
+
+.witem {
+  display: block;
+}

@@ -1,1 +1,14 @@
 #mapid { height: 180px; }
+
+#demoFont {
+  font-family: Impact, Charcoal, sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  color: #C7FFEF;
+  font-weight: 400;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+  }

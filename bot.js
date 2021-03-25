@@ -11,6 +11,7 @@ const fs = require('fs');
 const util = require('util');
 const chalk = require('chalk');
 const express = require('express');
+var favicon = require('serve-favicon');
 const app = express();
 const dbweather = require("./commands/weather");
 const sse = require('easy-server-sent-events');
@@ -179,9 +180,13 @@ readdirSync(`${__dirname}/commands`)
 app.use(SSE);
 
 // #webserver
+app.use(favicon(`${__dirname}/public/favicon.ico`));
 app.use('/static', express.static('public'));
 app.get('/api', async (req, res) => {
   return res.json(await dbweather.dbweather());
+});
+app.get('/average', async (req, res) => {
+  return res.json(await dbweather.dbweather_resume());
 });
 
 app.listen(3000, () => {

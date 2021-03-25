@@ -6,7 +6,6 @@ const sqlite = require('sqlite');
 const WURL = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lang=pt_br&q=';
 var db = null;
 
-
 function test(send) {
   send(
     'all',
@@ -106,9 +105,32 @@ exports.dbweather = async () => {
   return (result);
 }
 
+exports.dbweather_resume = async () => {
+  result = await db.all('select * from weathermap_resume',[], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+  });
+
+  return (result);
+}
+
 
 process.on('SIGINT', function() {
   console.log("Caught interrupt signal");
   db.close();
   process.exit();
 });
+
+
+/**
+ *  CREATE VIEW weathermap_resume  AS
+    SELECT
+      AVG("temp") as MEDIA,
+      MIN("temp") as MIN,
+      MAX("temp") as MAX
+    FROM
+      weathermap
+    where
+      DATE("timestamp","-3 hour") = DATE("now","-3 hour")
+ */
