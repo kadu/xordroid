@@ -40,15 +40,17 @@ exports.default = (client, obs, mqtt, messages) => {
   });
 
   obs.on("ConnectionOpened", (data) => {
-    obsIsConnected = true;
-    obs.send('GetCurrentScene')
-      .then(data => {
-        currentScene = data.name;
-        console.log("Cena atual ", currentScene);
-      })
-      .catch(() => {
-        console.log("Algo aconteceu aqui!");
-      });
+    if(!obsIsConnected) {
+      obsIsConnected = true;
+      obs.send('GetCurrentScene')
+        .then(data => {
+          currentScene = data.name;
+          console.log("Cena atual ", currentScene);
+        })
+        .catch(() => {
+          console.log("Algo aconteceu aqui!");
+        });
+    }
   });
 
   client.on('message', (target, context, message, isBot) => {

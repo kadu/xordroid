@@ -1,5 +1,5 @@
 let currentScene;
-let obsIsConnected;
+let obsIsConnected = false;
 
 module.exports = {
   default: function (client, obs, mqtt, messages) {
@@ -8,15 +8,17 @@ module.exports = {
     });
 
     obs.on("ConnectionOpened", (data) => {
-      obsIsConnected = true;
-      obs.send('GetCurrentScene')
-        .then(data => {
-          currentScene = data.name;
-          console.log("Cena atual ", currentScene);
-        })
-        .catch(() => {
-          console.log("Algo aconteceu aqui!");
-        });
+      if(obsIsConnected) {
+        obsIsConnected = true;
+        obs.send('GetCurrentScene')
+          .then(data => {
+            currentScene = data.name;
+            console.log("Cena atual ", currentScene);
+          })
+          .catch(() => {
+            console.log("Algo aconteceu aqui!");
+          });
+      }
     });
   },
 
@@ -49,5 +51,4 @@ module.exports = {
     });
 
   }
-
 }
