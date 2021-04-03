@@ -53,7 +53,7 @@ exports.default = (client, obs, mqtt, messages) => {
 
   client.on("cheer", (channel, userstate, message) => {
     eventsMessage(40,
-      `Olha lá, recebendo um cheer (eu nem sei direito o que é isso), foram ${userstate.bits}`,
+      `Olha lá, recebendo um cheer, foram ${userstate.bits}`,
       `Valeu pelos bits!`
       ,20000);
   });
