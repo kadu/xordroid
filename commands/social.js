@@ -43,10 +43,6 @@ exports.default = (client, obs, mqtt, messages) => {
         client.say(target, 'Donate com PIX -> http://www.kaduzi.us/pix');
         break;
 
-      case '!arduinoday':
-        client.say(target, 'Arduino Day 2021 -> https://guildamaker.com/arduinoday2021/');
-        break;
-
       case '!guilda':
         client.say(target, 'Arduino Day 2021 -> https://guildamaker.com/');
         break;
