@@ -47,6 +47,11 @@ exports.default = (client, obs, mqtt, messages) => {
         client.say(target, 'Arduino Day 2021 -> https://guildamaker.com/');
         break;
 
+      case '!commands':
+      case '!comandos':
+        client.say(target, 'A lista ficou grande, bora ver todos os comandos aqui -> https://www.kaduzi.us/twitch-comandos');
+        break;
+
       default:
         break;
     }
