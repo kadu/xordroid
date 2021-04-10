@@ -10,6 +10,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
         const isTTSEnabled = TTS_ENABLED == "true";
 
         let ttsCommands=[];
+        let coolDownControl=[];
 
         const TTSLanguage = [
           {"command": "!tts"  , "language": "pt-BR", "saidText": "disse" },
@@ -28,6 +29,12 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
               client.say(target, "TTS is disabled | TTS está desativado");
               return;
             }
+
+            // coolDownControl.push({'user': context["display-name"], 'ts':context["tmi-sent-ts"]});
+            // coolDownControl.forEach((k,v) => {
+            //   var date = new Date(v.ts * 1000);
+            //   date.getTime() <
+            // });
 
             let fullMessage = context["display-name"] + command.saidText  + " : " + message.replace(command.command,"");
             ttsQueue.push( {'msg': fullMessage, 'lang': command.language,'inputType': 'text'});
