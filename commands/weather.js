@@ -77,14 +77,14 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                     await db.run("INSERT INTO weathermap (video_time, username, city, lat, long, temp, temp_feelslike)  VALUES(?,?,?,?,?,?,?)", [await getStreamTime(obs), context.username, city, lat, lon, temp, feels_like]);
                   }
 
-                  const message = `${city}(${country}) ${temp}oC`;
+                  const message = `${city}(${country}) temos ${temp}ºC com sensação térmica de ${feels_like}ºC. ${temp_descr}`;
                   client.say(
                       target,
                       message,
                   );
-                  messages.push(message);
+                  messages.push(`${city}(${country}) - ${temp}oC`);
 
-                  test(send);
+                  // test(send);
 
                 } catch (error) {
                   client.say(target, 'Não consegui achar sua cidade :/');
