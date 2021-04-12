@@ -6,7 +6,7 @@ const sqlite = require('sqlite');
 const WURL = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lang=pt_br&q=';
 var db = null;
 
-function test(send) {
+function sendSSEMessage(send) {
   send(
     'all',
     'newcity',
@@ -84,7 +84,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                   );
                   messages.push(`${city}(${country}) - ${temp}oC`);
 
-                  // test(send);
+                  sendSSEMessage(send);
 
                 } catch (error) {
                   client.say(target, 'Não consegui achar sua cidade :/');
