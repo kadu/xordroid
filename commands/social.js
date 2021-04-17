@@ -19,8 +19,9 @@ exports.default = (client, obs, mqtt, messages) => {
         client.say(target, 'https://www.instagram.com/canaldokadu/');
         break;
 
+      case '!git':
       case '!github':
-        client.say(target, 'https://github.com/kadu/');
+        client.say(target, 'Github do Kaduzius -> https://github.com/kadu/');
         break;
 
       case '!lojinha':
