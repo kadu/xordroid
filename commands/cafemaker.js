@@ -39,7 +39,7 @@ exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
 
-    let proxima_data = "24/04/2021 - próximo sabado! Com os campeões do Show And Tell do Arduino Day!"
+    let proxima_data = "08/05/2021 - Entrevistados já confirmados @victorzonta e @grumpy_lele"
 
     switch (message) {
         case '!cafemaker':
