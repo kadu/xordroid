@@ -16,7 +16,6 @@ exports.default = (client, target, context, messages) => {
     case '!selvagem':
       client.say(target,`Acho que cê ta na live errada Kappa. A certa é essa aqui: @pokemaobr`);
       break;
-    case '!participar':
     case '!meme':
       client.say(target,`Eu ouvi falar C# ? cola lá na live do @daniel_dev`);
       break;
