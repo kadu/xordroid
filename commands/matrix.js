@@ -7,11 +7,15 @@ exports.default = (client, obs, mqtt, messages) => {
     if(context.username !== 'kaduzius') return;
 
     const parsedMessage = message.split(" ");
+    const fullMessage = message.replace("!matrix ","").replace("!fixmatrix ","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     switch (parsedMessage[0]) {
       case '!matrix':
-        const fullMessage = message.replace("!matrix ","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
         messages.push(fullMessage);
         break;
+        case '!fixmatrix':
+          mqtt.publish("homie/ledmatrix/message/state", "Idle");
+          mqtt.publish("homie/ledmatrix/message/fixmessage/set", fullMessage);
+          break;
       default:
         break;
     }
