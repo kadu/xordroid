@@ -13,7 +13,7 @@ exports.default = (client, obs, mqtt, messages) => {
         if (isBot) return;
 
         switch (message) {
-            case '!dica':
+            case '!superdica':
             case '!tocansado':
                 response = await get(boredAPIURL);
                 response = JSON.parse(response);
