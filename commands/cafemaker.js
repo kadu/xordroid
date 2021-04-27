@@ -39,14 +39,14 @@ exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
 
-    let proxima_data = "08/05/2021 - Entrevistados já confirmados @victorzonta e @grumpy_lele"
+    let proxima_data = "08/05/2021 - Entrevistados já confirmados @victorzonta, @grumpy_lele e @otavio_kr";
 
     switch (message) {
         case '!cafemaker':
         case '!cafe':
             client.say(
                 target,
-                `O Próximo Café Maker será dia ${proxima_data} as 10:00 am - Playlist no youtube  https://bit.ly/ytcafemaker`,
+                `O Próximo Café Maker será dia ${proxima_data} as 10:00 am - Playlist no youtube  https://bit.ly/ytcafemaker - Tem um projeto, quer apresentar, prencha o formulário -> https://forms.gle/mb3TNDmu9wtZzsTe9`,
             );
             break;
         case '!ad':
