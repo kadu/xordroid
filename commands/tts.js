@@ -16,9 +16,10 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
           {"command": "!tts"  , "language": "pt-BR", "saidText": "disse" },
           {"command": "!entts", "language": "en"   , "saidText": "said" },
           {"command": "!pttts", "language": "pt-PT", "saidText": "disse" },
-          {"command": "!frtts", "language": "fr-FR", "saidText": "mentionné" },
+          {"command": "!frtts", "language": "fr-FR", "saidText": "a dit" },
           {"command": "!rutts", "language": "ru-RU", "saidText": "сказал" },
-          {"command": "!detts", "language": "ru-RU", "saidText": "sagt" }
+          {"command": "!estts", "language": "es-AR", "saidText": "dijo" },
+          {"command": "!detts", "language": "de-DE", "saidText": "sagt" }
         ];
 
         let parsedMessage = message.split(" ");
