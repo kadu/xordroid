@@ -39,7 +39,7 @@ exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
 
-    let proxima_data = "08/05/2021 - Entrevistados já confirmados @victorzonta, @grumpy_lele e @otavio_kr";
+    let proxima_data = "22/05/2021 - E teremos convidados sensacionais ;)";
 
     switch (message) {
         case '!cafemaker':
