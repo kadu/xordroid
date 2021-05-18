@@ -39,15 +39,24 @@ exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
 
-    let proxima_data = "22/05/2021 - E teremos convidados sensacionais ;)";
+    let proxima_data = "22/05/2021 - E teremos dois convidados sensacionais ;) - Hérika Ströngreen (@strongreen) e Klinsman (insta @klinsman_jorge)";
 
     switch (message) {
         case '!cafemaker':
         case '!cafe':
             client.say(
                 target,
-                `O Próximo Café Maker será dia ${proxima_data} as 10:00 am - Playlist no youtube  https://bit.ly/ytcafemaker - Tem um projeto, quer apresentar, prencha o formulário -> https://forms.gle/mb3TNDmu9wtZzsTe9`,
+                `O Próximo Café Maker será dia ${proxima_data} as 10:00 am - Playlist no youtube  https://bit.ly/ytcafemaker`,
             );
+
+            setTimeout(() => {
+              client.say(
+                target,
+                `Aproveitando, tem um projeto? quer apresentar no café? prencha o formulário -> https://forms.gle/mb3TNDmu9wtZzsTe9`,
+              );
+            }, 2000);
+
+
             break;
         case '!ad':
           //https://github.com/hvilela0/DesktopJS/blob/master/modulos/ad.js
