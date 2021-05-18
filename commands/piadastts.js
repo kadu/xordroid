@@ -1,9 +1,11 @@
-const bent = require('bent');
-const getJSON = bent('json');
-const jsdom           = require("jsdom");
-const { JSDOM }       = jsdom;
+const bent      = require('bent');
+const { response } = require('express');
+const getJSON   = bent('json');
+const jsdom     = require("jsdom");
+const { JSDOM } = jsdom;
 
 const jokeAPIURL = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
+const eltroblocks = "https://api.catarse.me/user_details?id=eq.1533481"
 const piadaAPIURL = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
 const piadasURL = "https://osvigaristas.com.br";
 const piadasURI = "/charadas/pagina#.html";
@@ -26,6 +28,11 @@ function getFunAudio() {
   return cartoonAudioURL + randomElement;
 }
 
+async function eletrocount() {
+  let retorno = await getJSON(eltroblocks);
+  return retorno[0].total_contributed_projects;
+}
+
 async function getPiada() {
   const getStream = bent(piadasURL);
   let stream = await getStream(piadasURI.replace("#",randomInt(1,33)));
@@ -34,7 +41,6 @@ async function getPiada() {
   value = dom.window.document.querySelector(`#main > article:nth-child(${randomInt(2,30)}) > div > div > div:nth-child(2) > div`).textContent.trim().toLocaleLowerCase();
   return value;
 }
-
 
 exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
     client.on('message', async (target, context, message, isBot) => {
@@ -65,6 +71,10 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
 
             case '!piadateste':
               getPiada();
+              break;
+            case '!eletrocount':
+              let valor = await eletrocount();
+              client.say(target, `a @julialabs e o eletroblocks já venderam ${valor} kits`);
               break;
             default:
                 break;
