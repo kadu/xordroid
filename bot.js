@@ -15,6 +15,8 @@ var favicon = require('serve-favicon');
 const app = express();
 const dbweather = require("./commands/weather");
 const sse = require('easy-server-sent-events');
+const Discord = require('discord.js');
+const cDiscord = new Discord.Client();
 
 const clienttts = new textToSpeech.TextToSpeechClient();
 async function playTTS(message) {
@@ -49,6 +51,7 @@ const MQTT_HOST = process.env.MQTT_HOST;
 const MQTT_CLIENT = process.env.MQTT_CLIENT;
 const MQTT_USER = process.env.MQTT_USER;
 const MQTT_PW = process.env.MQTT_PW;
+const DISCORD_KEY = process.env.DISCORD_KEY;
 
 const mqtt_options = {
 	host: MQTT_HOST,
@@ -75,6 +78,9 @@ mqtt.on('connect', function () {
 			mqtt.publish("wled/158690/col", "#7FFF00");
       mqtt.publish("wled/158690", "ON");
       mqtt.publish("homie/ledmatrix/matrix/on/set","true");
+      mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7C03F");
+      mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7609F");
+
     }
   });
 
@@ -104,6 +110,22 @@ mqtt.on('connect', function () {
     }
   }, 2500);
 });
+
+cDiscord.on('ready', () => {
+  console.log(`Logged in as ${cDiscord.user.tag}!`);
+});
+
+
+cDiscord.on('message', message => {
+  if (message.content === '!pingdu') {
+    message.channel.send('Pong.');
+
+    const channel = cDiscord.channels.cache.find(channel => channel.name === "cafe_maker");
+    channel.send("cafe maker");
+  }
+});
+
+cDiscord.login(DISCORD_KEY);
 
 const client = new tmi.Client({
   options: {
