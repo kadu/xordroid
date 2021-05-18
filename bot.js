@@ -212,5 +212,5 @@ app.get('/average', async (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log(`Example app listening at http://localhost:${3000}`)
+  console.log(`Weather map is live in http://localhost:${3000}`);
 });
