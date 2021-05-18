@@ -15,6 +15,7 @@ let hangword          = "";
 let displayText       = "";
 let hangmanTip        = "";
 let isGameFinished    = true;
+let sql;
 
 function randomInt(min, max) {
 	return min + Math.floor((max - min) * Math.random());
@@ -24,32 +25,28 @@ var replaceAt = function(index, replacement, word) {
   return word.substr(0, index) + replacement + word.substr(index + replacement.length);
 }
 
-function hasOpenedHangmanGame() {
-  //select * FROM hangman_games hg2 WHERE finish_date BETWEEN DATETIME(CURRENT_TIMESTAMP, "+3 MINUTES") AND DATETIME(CURRENT_TIMESTAMP, "+8 MINUTES")
-  return false;
+async function hasOpenedHangmanGame() {
+  sql = "select * FROM hangman_games hg2 WHERE finish_date BETWEEN DATETIME(CURRENT_TIMESTAMP, '+3 MINUTES') AND DATETIME(CURRENT_TIMESTAMP, '+8 MINUTES') AND hg2.winner IS NULL";
+  const result = await db.get(sql, [], (err, row) => {
+    if(err) {
+      return console.log(err);
+    }
+  });
+
+  if(typeof result != 'undefined') {
+    gameID = result.id;
+    return true;
+  } else {
+    return false;
+  }
 }
 
-class HangManGame {
-
-  startNewGame() { // !forca
-  }
-
-  joinGame() { // !participar
-  }
-
-  guess() { // !letra
-  }
-
-  hint() { // !dica
-  }
-
-
+async function endGame(gameID) {
+  console.log(gameID);
+  sql = "UPDATE hangman_games SET winner = 'OK' where id = ?";
+  let retorno = await db.run(sql,[gameID]);
+  console.log(retorno);
 }
-
-
-
-
-
 
 async function createDB() {
   try {
@@ -69,25 +66,39 @@ async function getWord() {
   const str = await stream.text();
   const dom = new JSDOM(str);
   value = dom.window.document.querySelector('body > center > center > table:nth-child(4) > tbody > tr > td > div').textContent.trim().toLocaleLowerCase();
-  console.log(value);
 
-  if(value.length < 10) {
+  if(value.length < 9) {
     return value.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
   } else {
-    console.log(`Too long\n`);
+    console.log(`Too long ${value}\n`);
     return await getWord();
   }
+}
+
+async function getTip(word) {
+  const url = dicPalavra.replace("#", word);
+  significado = await getJSON(url);
+  if(significado.length > 0) {
+    hangmanTip = significado[0].xml.replace(/(<([^>]+)>)/gi, "").replace(/(\r\n|\n|\r)/gm, " ");
+    hangmanTip = hangmanTip.toLowerCase();
+    hangmanTip = hangmanTip.replace(word,"#".repeat(word.length));
+  } else {
+    console.log(`DEU ERRO => ${word}`);
+    return "";
+  }
+
+  return hangmanTip;
 }
 
 
 exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) => {
     client.on('message', async (target, context, message, isBot) => {
         if (isBot) return;
-        let sql;
 
         const parsedMessage = message.split(" ");
         switch (parsedMessage[0]) {
           case '!dica':
+            hangmanTip = await getTip(hangword);
             if(hangmanTip.length > 0) {
               client.say(target, `Dica: ${hangmanTip}`);
             }
@@ -107,6 +118,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             });
 
             if(typeof result != 'undefined') {
+              console.log(`@${context.username} vidas ${result.lives}  gameID ${gameID}`);
               if(result.lives === 0) {
                 client.say(target,`@${context.username}, morto não fala, nunca mais! :P`);
                 return;
@@ -139,7 +151,12 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
 
               if(displayText == hangword) {
                 isGameFinished = true;
+                // sql = "UPDATE hangman_games SET winner = 'OK' where id = ?";
+                // await db.run(sql,[gameID]);
+                endGame(gameID);
+
                 client.say(target, `Parabéns CHAT \\o/, a palavra foi revelada!`);
+                gameID = 0;
                 sound.play(`${__dirname}\\audio\\forca\\vitoria0${randomInt(1,7)}.mp3`)
                   .then((response) => {})
                   .catch((error) => {
@@ -147,6 +164,24 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                   });
               }
             }
+            break;
+          case '!lives':
+          case '!vidas':
+            sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
+            // const result = await db.get(sql, [gameID, context.username], (err, row) => {
+            //   if(err) {
+            //     return console.log(err);
+            //   }
+            // });
+
+            // if(typeof result != 'undefined') {
+            //   if(result.lives === 0) {
+            //     client.say(target,`@${context.username}, você tem ${result.lives} vidas`);
+            //     return;
+            //   }
+            // } else {
+            //   client.say(target,`Sem jogo ativo @${context.username}`);
+            // }
             break;
           case '!participar':
             if(gameID === 0) return
@@ -157,10 +192,13 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             break;
           case '!hangman':
           case '!forca':
-            if(!hasOpenedHangmanGame()) {
+            const checkOpenGame = await hasOpenedHangmanGame();
+            if(!checkOpenGame) {
               isGameFinished = false;
-              await db.run("INSERT INTO hangman_games (finish_date) values ((DATETIME(CURRENT_TIMESTAMP, '+6 minutes')))");
-              const result = await db.get("SELECT ID FROM hangman_games hg2 WHERE finish_date BETWEEN DATETIME(CURRENT_TIMESTAMP, '+3 MINUTES') AND DATETIME(CURRENT_TIMESTAMP, '+8 MINUTES')", [], (err, row) => {
+              let dbreturn = await db.run("INSERT INTO hangman_games (finish_date) values ((DATETIME(CURRENT_TIMESTAMP, '+6 minutes')))");
+              console.log(`dbreturn ${dbreturn}`);
+              console.dir(dbreturn);
+              const result = await db.get("SELECT ID FROM hangman_games hg2 WHERE finish_date BETWEEN DATETIME(CURRENT_TIMESTAMP, '+3 MINUTES') AND DATETIME(CURRENT_TIMESTAMP, '+8 MINUTES') AND hg2.winner IS NULL", [], (err, row) => {
                 if(err) {
                   return console.log(err);
                 }
@@ -169,42 +207,50 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
               if(typeof result != 'undefined') {
                 client.say(target, "O jogo está iniciado, digita !participar para entrar no jogo! (Chat, vocês tem 1 minuto pra entrar)");
                 gameID = result.id;
+                console.log(`depois dbreturn - gameID ${gameID}`);
               }
 
               hangword = await getWord();
               displayText = '#'.repeat(hangword.length);
 
-              const url = dicPalavra.replace("#", hangword);
-              significado = await getJSON(url);
-              try {
-
-                if(significado[0] !== undefined ) {
-                  hangmanTip = significado[0].xml.replace(/(<([^>]+)>)/gi, "").replace(/(\r\n|\n|\r)/gm, " ");
-                  hangmanTip = hangmanTip.toLowerCase();
-                  hangmanTip = hangmanTip.replace(hangword,"#".repeat(hangword.length));
-                  client.say(target, `Dica: ${hangmanTip}`);
-                }
-              } catch (error) {
-                console.log(`DEU ERRO => ${hangword}`);
+              significado = await getTip(hangword);
+              if(significado.length > 0) {
+                client.say(target, `Dica: ${hangmanTip}`);
+              }
+              else {
                 client.say(target, `Dica: Essa palavra não tem dica KKKK kappa`);
               }
 
               mqtt.publish("homie/ledmatrix/message/state", "Idle");
               mqtt.publish("homie/ledmatrix/message/fixmessage/set", displayText);
             }
+            else {
+              client.say(target,"Existe um jogo aberto, manda um !participar e jogue você tambem");
+            }
 
           // check if was game in progress
           // if not, insert o DB a new game, with correct start and stop date, control de timer (overlay in live)
             break;
-          case '!palavra':
-              hangword = await getWord();
-              client.say(
-                  target,
-                  `só um teste... básico! ${hangword} `,
-              );
+          // case '!palavra':
+          //     hangword = await getWord();
+          //     client.say(
+          //         target,
+          //         `só um teste... básico! ${hangword} `,
+          //     );
+          //     break;
+          // case '!testadica':
+          //   let tip = await getTip(hangword);
+          //   client.say(
+          //     target,
+          //     `Dica teste => ${tip} `,
+          //   );
+          //   break;
+          case '!fimforca':
+            if(context.username !== 'kaduzius') return;
+            endGame(gameID);
+            break;
+          default:
               break;
-            default:
-                break;
         }
     });
 };
