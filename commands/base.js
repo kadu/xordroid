@@ -8,6 +8,13 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                     target,
                     `só um teste... básico!`,
                 );
+
+                client.whisper("kaduzius", "Your message")
+                  .then((data) => {
+                    console.log(data);
+                  }).catch((err) => {
+                    console.log(err);
+                  });
                 break;
             default:
                 break;
