@@ -51,8 +51,12 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
         switch (parsedMessage[0]) {
             case '!tempo':
             case '!weather':
-                let fullMessage = message.replace("!weather ","").replace("!tempo ","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+                let fullMessage = message.replace("!weather","").replace("!tempo","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
                 let cidade = fullMessage;
+                if(cidade == "") {
+                  client.say(target, `@${context.username} você deve usar o !tempo seguido da sua cidade, exemplo para a cidade de São Paulo: !tempo são paulo`);
+                  return;
+                }
                 let response = "";
                 try {
                   response         = await getJSON(`${WURL}${cidade}&appid=${openWeatherKey}`);
