@@ -38,6 +38,8 @@ exports.default = (client, target, context, messages) => {
           client.say(target,`Já é 17:30 ai no seu relógio? Vai na no canal @julialabs então ;)`);
         }, 3000);
         break;
+      case '!java':
+        client.say(target,`Esse negocio de ficar arrepiando o diabo só acontece la na live do @daviprm_, ja aproveita e da um cola lá, um followzinho ;)`);        break;
       default:
         break;
     }
