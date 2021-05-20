@@ -115,16 +115,6 @@ cDiscord.on('ready', () => {
   console.log(`Logged in as ${cDiscord.user.tag}!`);
 });
 
-
-cDiscord.on('message', message => {
-  if (message.content === '!pingdu') {
-    message.channel.send('Pong.');
-
-    const channel = cDiscord.channels.cache.find(channel => channel.name === "cafe_maker");
-    channel.send("cafe maker");
-  }
-});
-
 cDiscord.login(DISCORD_KEY);
 
 const client = new tmi.Client({
@@ -194,7 +184,7 @@ const {SSE, send, openSessions, openConnections} = sse(options);
 readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
   .forEach((file) => {
-		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
+		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
   });
 
 

@@ -2,6 +2,11 @@ const sqlite3 = require('sqlite3').verbose();
 const sqlite = require('sqlite');
 var db = null;
 
+/*
+const channel = client.channels.cache.find(channel => channel.name === channelName)
+channel.send(message)
+*/
+
 async function getStreamTime(obs) {
   return obs.send('GetStreamingStatus', {})
     .then( (value) => {
@@ -23,7 +28,7 @@ async function createDB() {
 
 createDB();
 
-exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) => {
+exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord) => {
     client.on('message', async (target, context, message, isBot) => {
         if (isBot) return;
 
@@ -33,6 +38,9 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
           const fullMessage = message.replace("!anota ",""); //.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
           client.say(target, `@${context.username}, anotado, valeu!`);
           await db.run("INSERT INTO annotation (video_time, username, annotation)  VALUES(?,?, ?)", [await getStreamTime(obs), context.username, fullMessage]);
+
+          const channel = cDiscord.channels.cache.find(channel => channel.name === "anotações");
+          channel.send(`Enviada por @${context.username} : ${fullMessage}`);
         }
     });
 };
