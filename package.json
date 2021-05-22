@@ -11,6 +11,7 @@
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.3",
     "color-name-list": "^7.19.0",
+    "cron": "^1.8.2",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
     "easy-server-sent-events": "^1.0.14",
