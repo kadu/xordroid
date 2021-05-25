@@ -80,8 +80,14 @@ async function getTip(word) {
   significado = await getJSON(url);
   if(significado.length > 0) {
     hangmanTip = significado[0].xml.replace(/(<([^>]+)>)/gi, "").replace(/(\r\n|\n|\r)/gm, " ");
-    hangmanTip = hangmanTip.toLowerCase();
-    hangmanTip = hangmanTip.replace(word,"#".repeat(word.length));
+    hangmanTip = hangmanTip.toLowerCase().trim();
+
+    let replacer = new RegExp(word, 'g');
+    hangmanTip = hangmanTip.replace(replacer,"#".repeat(word.length));
+
+    replacer = new RegExp("\\(.+\\) *$", 'g');
+    hangmanTip = hangmanTip.replace(replacer,'');
+
   } else {
     console.log(`DEU ERRO => ${word}`);
     return "";
@@ -101,6 +107,9 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             hangmanTip = await getTip(hangword);
             if(hangmanTip.length > 0) {
               client.say(target, `Dica: ${hangmanTip}`);
+            }
+            else {
+              client.say(target, `Dica: Essa palavra não tem dica KKKK kappa`);
             }
             break;
           case '!letra':
