@@ -18,6 +18,11 @@ let isGameFinished    = true;
 let gameStartTime;
 let sql;
 
+function getMinutesBetweenDates(startDate, endDate) {
+  var diff = endDate.getTime() - startDate.getTime();
+  return (diff / 60000);
+}
+
 async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send) {
   const checkOpenGame = await hasOpenedHangmanGame();
   if(!checkOpenGame) {
@@ -33,6 +38,11 @@ async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue,
 
     if(typeof result != 'undefined') {
       client.say("kaduzius", "O jogo está iniciado, digita !participar para entrar no jogo! (Chat, vocês tem 1 minuto pra entrar)");
+
+      setTimeout(() => {
+        client.say("kaduzius","Que começem os jogos! - Exemplo: !letra a");
+      }, 60000);
+
       gameID = result.id;
       gameStartTime = new Date();
       console.log(`depois dbreturn - gameID ${gameID}`);
@@ -167,6 +177,11 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             });
 
             if(typeof result != 'undefined') {
+              if(getMinutesBetweenDates(gameStartTime, new Date()) < 1) {
+                client.say(target, `Ainda faltam alguns segundos pro jogo começar!`);
+                return;
+              }
+
               console.log(`@${context.username} vidas ${result.lives}  gameID ${gameID}`);
               if(result.lives === 0) {
                 client.say(target,`@${context.username}, morto não fala, nunca mais! :P`);
@@ -234,6 +249,13 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             break;
           case '!participar':
             if(gameID === 0) return
+
+            if(getMinutesBetweenDates(gameStartTime, new Date()) > 1) {
+              client.say(target, `@${context.username} o jogo já começou, vai ter que ficar para o próximo :/`);
+              return;
+            }
+
+
             sql = `INSERT INTO hangman_players (hangman_gameid, twitch_account) values (${gameID},"${context.username}")`;
             await db.run(sql);
             // calcular tempo para por nos segundos
