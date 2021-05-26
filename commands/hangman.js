@@ -15,7 +15,47 @@ let hangword          = "";
 let displayText       = "";
 let hangmanTip        = "";
 let isGameFinished    = true;
+let gameStartTime;
 let sql;
+
+async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send) {
+  const checkOpenGame = await hasOpenedHangmanGame();
+  if(!checkOpenGame) {
+    isGameFinished = false;
+    let dbreturn = await db.run("INSERT INTO hangman_games (finish_date) values ((DATETIME(CURRENT_TIMESTAMP, '+6 minutes')))");
+    console.log(`dbreturn ${dbreturn}`);
+    console.dir(dbreturn);
+    const result = await db.get("SELECT ID FROM hangman_games hg2 WHERE finish_date BETWEEN DATETIME(CURRENT_TIMESTAMP, '+3 MINUTES') AND DATETIME(CURRENT_TIMESTAMP, '+8 MINUTES') AND hg2.winner IS NULL", [], (err, row) => {
+      if(err) {
+        return console.log(err);
+      }
+    });
+
+    if(typeof result != 'undefined') {
+      client.say("kaduzius", "O jogo está iniciado, digita !participar para entrar no jogo! (Chat, vocês tem 1 minuto pra entrar)");
+      gameID = result.id;
+      gameStartTime = new Date();
+      console.log(`depois dbreturn - gameID ${gameID}`);
+    }
+
+    hangword = await getWord();
+    displayText = '#'.repeat(hangword.length);
+
+    significado = await getTip(hangword);
+    if(significado.length > 0) {
+      client.say("kaduzius", `Dica: ${hangmanTip}`);
+    }
+    else {
+      client.say("kaduzius", `Dica: Essa palavra não tem dica KKKK kappa`);
+    }
+
+    mqtt.publish("homie/ledmatrix/message/state", "Idle");
+    mqtt.publish("homie/ledmatrix/message/fixmessage/set", displayText);
+  }
+  else {
+    client.say("kaduzius","Existe um jogo aberto, manda um !participar e jogue você tambem");
+  }
+}
 
 function randomInt(min, max) {
 	return min + Math.floor((max - min) * Math.random());
@@ -201,59 +241,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             break;
           case '!hangman':
           case '!forca':
-            const checkOpenGame = await hasOpenedHangmanGame();
-            if(!checkOpenGame) {
-              isGameFinished = false;
-              let dbreturn = await db.run("INSERT INTO hangman_games (finish_date) values ((DATETIME(CURRENT_TIMESTAMP, '+6 minutes')))");
-              console.log(`dbreturn ${dbreturn}`);
-              console.dir(dbreturn);
-              const result = await db.get("SELECT ID FROM hangman_games hg2 WHERE finish_date BETWEEN DATETIME(CURRENT_TIMESTAMP, '+3 MINUTES') AND DATETIME(CURRENT_TIMESTAMP, '+8 MINUTES') AND hg2.winner IS NULL", [], (err, row) => {
-                if(err) {
-                  return console.log(err);
-                }
-              });
-
-              if(typeof result != 'undefined') {
-                client.say(target, "O jogo está iniciado, digita !participar para entrar no jogo! (Chat, vocês tem 1 minuto pra entrar)");
-                gameID = result.id;
-                console.log(`depois dbreturn - gameID ${gameID}`);
-              }
-
-              hangword = await getWord();
-              displayText = '#'.repeat(hangword.length);
-
-              significado = await getTip(hangword);
-              if(significado.length > 0) {
-                client.say(target, `Dica: ${hangmanTip}`);
-              }
-              else {
-                client.say(target, `Dica: Essa palavra não tem dica KKKK kappa`);
-              }
-
-              mqtt.publish("homie/ledmatrix/message/state", "Idle");
-              mqtt.publish("homie/ledmatrix/message/fixmessage/set", displayText);
-            }
-            else {
-              client.say(target,"Existe um jogo aberto, manda um !participar e jogue você tambem");
-            }
-
-          // check if was game in progress
-          // if not, insert o DB a new game, with correct start and stop date, control de timer (overlay in live)
-            break;
-          // case '!palavra':
-          //     hangword = await getWord();
-          //     client.say(
-          //         target,
-          //         `só um teste... básico! ${hangword} `,
-          //     );
-          //     break;
-          // case '!testadica':
-          //   let tip = await getTip(hangword);
-          //   client.say(
-          //     target,
-          //     `Dica teste => ${tip} `,
-          //   );
-          //   break;
+            inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
           case '!fimforca':
             if(context.username !== 'kaduzius') return;
             endGame(gameID);
