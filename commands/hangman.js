@@ -18,6 +18,11 @@ let isGameFinished    = true;
 let gameStartTime;
 let sql;
 
+
+function map( x,  in_min,  in_max,  out_min,  out_max){
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 function getMinutesBetweenDates(startDate, endDate) {
   var diff = endDate.getTime() - startDate.getTime();
   return (diff / 60000);
@@ -28,8 +33,6 @@ async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue,
   if(!checkOpenGame) {
     isGameFinished = false;
     let dbreturn = await db.run("INSERT INTO hangman_games (finish_date) values ((DATETIME(CURRENT_TIMESTAMP, '+6 minutes')))");
-    console.log(`dbreturn ${dbreturn}`);
-    console.dir(dbreturn);
     const result = await db.get("SELECT ID FROM hangman_games hg2 WHERE finish_date BETWEEN DATETIME(CURRENT_TIMESTAMP, '+3 MINUTES') AND DATETIME(CURRENT_TIMESTAMP, '+8 MINUTES') AND hg2.winner IS NULL", [], (err, row) => {
       if(err) {
         return console.log(err);
@@ -177,8 +180,10 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             });
 
             if(typeof result != 'undefined') {
-              if(getMinutesBetweenDates(gameStartTime, new Date()) < 1) {
-                client.say(target, `Ainda faltam alguns segundos pro jogo começar!`);
+              let pastTime = getMinutesBetweenDates(gameStartTime, new Date());
+              let secs = Math.ceil(map(pastTime, 0,1,60,0));
+              if(pastTime < 1) {
+                client.say(target, `Ainda faltam ${secs} segundos pro jogo começar!`);
                 return;
               }
 
@@ -231,7 +236,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             break;
           case '!lives':
           case '!vidas':
-            sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
+            // sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
             // const result = await db.get(sql, [gameID, context.username], (err, row) => {
             //   if(err) {
             //     return console.log(err);
@@ -250,7 +255,8 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
           case '!participar':
             if(gameID === 0) return
 
-            if(getMinutesBetweenDates(gameStartTime, new Date()) > 1) {
+            let pastTime = getMinutesBetweenDates(gameStartTime, new Date());
+            if(pastTime > 1) {
               client.say(target, `@${context.username} o jogo já começou, vai ter que ficar para o próximo :/`);
               return;
             }
@@ -259,7 +265,8 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             sql = `INSERT INTO hangman_players (hangman_gameid, twitch_account) values (${gameID},"${context.username}")`;
             await db.run(sql);
             // calcular tempo para por nos segundos
-            client.say(target, `@${context.username} você está participando do jogo, que vai começar daqui X segundos.`);
+            let secs = Math.ceil(map(pastTime, 0,1,60,0));
+            client.say(target, `@${context.username} você está participando do jogo, que vai começar daqui ${secs} segundos.`);
             break;
           case '!hangman':
           case '!forca':
