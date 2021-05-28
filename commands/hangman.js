@@ -18,6 +18,18 @@ let isGameFinished    = true;
 let gameStartTime;
 let sql;
 
+async function finalizarForca(id, client) {
+  const result = await db.get("SELECT * FROM hangman_games hg2 WHERE hg2.id = ?", [id], (err, row) => {
+    if(err) {
+      return console.log(err);
+    }
+  });
+
+  if(typeof result != 'undefined') {
+    endGame(id);
+    client.say("kaduzius", `O jogo finalizou e infelizmente o Chat Perdeu :( - A palavra era ${hangword}`);
+  }
+}
 
 function map( x,  in_min,  in_max,  out_min,  out_max){
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -48,7 +60,11 @@ async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue,
 
       gameID = result.id;
       gameStartTime = new Date();
-      console.log(`depois dbreturn - gameID ${gameID}`);
+
+      setTimeout(() => {
+        finalizarForca(gameID, client);
+      }, 5*60000);
+
     }
 
     hangword = await getWord();
