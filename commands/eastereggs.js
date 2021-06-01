@@ -39,7 +39,11 @@ exports.default = (client, target, context, messages) => {
         }, 3000);
         break;
       case '!java':
-        client.say(target,`Esse negocio de ficar arrepiando o diabo só acontece la na live do @daviprm_, ja aproveita e da um cola lá, um followzinho ;)`);        break;
+        client.say(target,`Esse negocio de ficar arrepiando o diabo só acontece la na live do @daviprm_, ja aproveita e da um cola lá, um followzinho ;)`);
+        break;
+      case '!hub':
+        client.say(target,`Não conhece, deveria ;D é a força da comunidade em forma de discord -> https://discord.gg/jSWyhxh6 <- cola lá, e tem muito mais la dentro ;)`);
+        break;
       default:
         break;
     }
