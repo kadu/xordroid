@@ -36,7 +36,7 @@ exports.default = (client, target, context, messages) => {
         client.say(target,`Esse negocio de ficar arrepiando o diabo só acontece la na live do @daviprm_, ja aproveita e da um cola lá, um followzinho ;)`);
         break;
       case '!hub':
-        client.say(target,`Conheça a HUB, sua porta de conexão com comunidade! -> http://ahub.tech/discord`);
+        client.say(target,`Conheça a HUB, A porta de conexão com comunidade! -> http://ahub.tech/discord`);
         break;
       default:
         break;
