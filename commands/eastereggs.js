@@ -30,13 +30,7 @@ exports.default = (client, target, context, messages) => {
         client.say(target,`Eu não tenho o jogo do canhão, mas passa la no @webmat1, lá tem! ;)`);
         break;
       case '!eletroblocks':
-        client.say(target,`Não conheçe os eletroblocks, vai até o insta (https://www.instagram.com/eletroblocks/) e confere, e HOJE 12/05 é um dia especial, começa a campanha no https://www.catarse.me/eletroblocks vai lá e contribua, valeu deMAIS!`);
-        setTimeout(() => {
-          client.say(target,`E a @julialabs é a projetista do Eletroblocks, você pode ver live dela aqui na twitch, vai lá e da aquele follow maneiro também, https://www.twitch.tv/julialabs`);
-        }, 1500);
-        setTimeout(() => {
-          client.say(target,`Já é 17:30 ai no seu relógio? Vai na no canal @julialabs então ;)`);
-        }, 3000);
+        client.say(target,`Conheça mais os eletroblocks aqui -> https://www.instagram.com/eletroblocks/, veja também a live da @julialabs, a projetista dos eletroblocks! ;)`);
         break;
       case '!java':
         client.say(target,`Esse negocio de ficar arrepiando o diabo só acontece la na live do @daviprm_, ja aproveita e da um cola lá, um followzinho ;)`);
