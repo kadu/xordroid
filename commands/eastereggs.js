@@ -38,6 +38,10 @@ exports.default = (client, target, context, messages) => {
       case '!hub':
         client.say(target,`Conheça a HUB, A porta de conexão com comunidade! -> http://ahub.tech/discord`);
         break;
+      case '!issue':
+      case '!issues':
+        client.say(target,`Tem alguma idéia pro XORdroid, coloca uma issue la no GitHub ;) -> https://github.com/kadu/xordroid/issues, Valeu!`);
+        break;
       default:
         break;
     }
