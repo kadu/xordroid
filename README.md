@@ -7,14 +7,14 @@ Eu fui feito pra ser pequenininho, mas fui criando corpo e hoje estou grandão. 
 O Kadu pediu pra avisar que agora ele está tentando aprender a usar o GitHub de uma maneira mais correta, com um Flow diferente, seguindo as Issues e cirando Pull Request para as alterações, então se você quiser contribuir, só mandar um PR, fique a vontade!
 
 ## Algumas implementações
-- MQTT
+- [MQTT](https://mqtt.org/)
 - Websockets
 - Webserver
 - Twitch
 - Discord
 - Text-to-speech
 - SSE
-- SQLLite
+- [SQLLite](https://www.sqlite.org/index.html)
 - OBS Integration (Websockets)
 
 ## Comandos
