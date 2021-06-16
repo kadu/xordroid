@@ -17,6 +17,7 @@ let hangmanTip        = "";
 let isGameFinished    = true;
 let gameStartTime;
 let sql;
+let gameTimer;
 
 async function finalizarForca(id, client) {
   const result = await db.get("SELECT * FROM hangman_games hg2 WHERE hg2.id = ?", [id], (err, row) => {
@@ -61,7 +62,7 @@ async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue,
       gameID = result.id;
       gameStartTime = new Date();
 
-      setTimeout(() => {
+      gameTimer = setTimeout(() => {
         finalizarForca(gameID, client);
       }, 5*60000);
 
@@ -114,6 +115,7 @@ async function endGame(gameID) {
   console.log(gameID);
   sql = "UPDATE hangman_games SET winner = 'OK' where id = ?";
   let retorno = await db.run(sql,[gameID]);
+  clearTimeout(gameTimer);
   console.log(retorno);
 }
 
