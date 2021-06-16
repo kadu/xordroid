@@ -202,7 +202,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
 
             if(typeof result0 != 'undefined') {
               if((result0.totallives) - 1 === 0) {
-                client.say(target, "Oxi, Só tem zumbi por aqui! Se quiser, começe outro jogo mandando !forca");
+                client.say(target, "Oxi, Só tem zumbi por aqui! Se quiser, comece outro jogo mandando !forca");
                 endGame(gameID);
                 return;
               }
