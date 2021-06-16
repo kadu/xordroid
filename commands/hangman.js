@@ -19,8 +19,10 @@ let gameStartTime;
 let sql;
 let gameTimer;
 
-function matrixFixMessage(mqtt, message) {
-  mqtt.publish("homie/ledmatrix/message/state", "Idle");
+function matrixFixMessage(mqtt, message, updateStete = true) {
+  if(updateStete) {
+    mqtt.publish("homie/ledmatrix/message/state", "Idle");
+  }
   mqtt.publish("homie/ledmatrix/message/fixmessage/set", message);
 }
 
@@ -172,152 +174,159 @@ async function getTip(word) {
 
 
 exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) => {
-    client.on('message', async (target, context, message, isBot) => {
-        if (isBot) return;
+  client.on('message', async (target, context, message, isBot) => {
+      if (isBot) return;
 
-        const parsedMessage = message.split(" ");
-        switch (parsedMessage[0]) {
-          case '!dica':
-            hangmanTip = await getTip(hangword);
-            if(hangmanTip.length > 0) {
-              client.say(target, `Dica: ${hangmanTip}`);
+      const parsedMessage = message.split(" ");
+      switch (parsedMessage[0]) {
+        case '!dica':
+          hangmanTip = await getTip(hangword);
+          if(hangmanTip.length > 0) {
+            client.say(target, `Dica: ${hangmanTip}`);
+          }
+          else {
+            client.say(target, `Dica: Essa palavra não tem dica KKKK kappa`);
+          }
+          break;
+        case '!letra':
+          if(isGameFinished) {
+            client.say(target, `Poxa, a palavra já foi descoberta`);
+            return;
+          }
+
+
+          sql = "select sum(lives) as totallives from hangman_players hp where hp.hangman_gameid  = ?"
+          const result0 = await db.get(sql, [gameID], (err, row) => {
+            if(err) {
+              return console.log(err);
             }
-            else {
-              client.say(target, `Dica: Essa palavra não tem dica KKKK kappa`);
-            }
-            break;
-          case '!letra':
-            if(isGameFinished) {
-              client.say(target, `Poxa, a palavra já foi descoberta`);
+          });
+
+          if(typeof result0 != 'undefined') {
+            if((result0.totallives) - 1 === 0) {
+              client.say(target, "Oxi, Só tem zumbi por aqui! Se quiser, comece outro jogo mandando !forca");
+              endGame(gameID);
               return;
             }
+          }
 
 
-            sql = "select sum(lives) as totallives from hangman_players hp where hp.hangman_gameid  = ?"
-            const result0 = await db.get(sql, [gameID], (err, row) => {
-              if(err) {
-                return console.log(err);
-              }
-            });
-
-            if(typeof result0 != 'undefined') {
-              if((result0.totallives) - 1 === 0) {
-                client.say(target, "Oxi, Só tem zumbi por aqui! Se quiser, comece outro jogo mandando !forca");
-                endGame(gameID);
-                return;
-              }
+          // get users lives
+          sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
+          const result = await db.get(sql, [gameID, context.username], (err, row) => {
+            if(err) {
+              return console.log(err);
             }
+          });
 
-
-            // get users lives
-            sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
-            const result = await db.get(sql, [gameID, context.username], (err, row) => {
-              if(err) {
-                return console.log(err);
-              }
-            });
-
-            if(typeof result != 'undefined') {
-              let pastTime = getMinutesBetweenDates(gameStartTime, new Date());
-              let secs = Math.ceil(map(pastTime, 0,1,60,0));
-              if(pastTime < 1) {
-                client.say(target, `Ainda faltam ${secs} segundos pro jogo começar!`);
-                return;
-              }
-
-              console.log(`@${context.username} vidas ${result.lives}  gameID ${gameID}`);
-              if(result.lives === 0) {
-                client.say(target,`@${context.username}, morto não fala, nunca mais! :P`);
-                return;
-              }
-            } else {
-              client.say(target,`@${context.username}, para participar você precisa digitar !participar`);
-              return;
-            }
-
-
-            wordToSearch = String(parsedMessage[1]).toLowerCase();
-            if(hangword.indexOf(wordToSearch) == -1) {
-              // tira ponto
-              sql = "UPDATE hangman_players SET lives = lives - 1 where hangman_gameid = ? AND twitch_account = ?";
-              await db.run(sql,[gameID, context.username]);
-              if(result.lives-1 == 0 ) {
-                client.say(target,`@${context.username}, você morreu!`);
-              } else {
-                client.say(target,`@${context.username}, errou e agora só resta ${result.lives-1} vidas`);
-              }
-
-            } else {
-              client.say(target,`@${context.username}, bom palpite`);
-              for (let index = 0; index < hangword.length; index++) {
-                if(hangword.charAt(index) == wordToSearch) {
-                  displayText =replaceAt(index, wordToSearch, displayText);
-                }
-              }
-              matrixFixMessage(mqtt, displayText);
-
-              if(displayText == hangword) {
-                isGameFinished = true;
-                // sql = "UPDATE hangman_games SET winner = 'OK' where id = ?";
-                // await db.run(sql,[gameID]);
-                endGame(gameID);
-
-                client.say(target, `Parabéns CHAT \\o/, a palavra era ${hangword}`);
-                setTimeout(() => {
-                  messages.push("\\o/ Parabens CHAT");
-                }, 2000);
-                gameID = 0;
-                sound.play(`${__dirname}\\audio\\forca\\vitoria0${randomInt(1,7)}.mp3`)
-                  .then((response) => {})
-                  .catch((error) => {
-                    console.error(error);
-                  });
-              }
-            }
-            break;
-          case '!lives':
-          case '!vidas':
-            // sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
-            // const result = await db.get(sql, [gameID, context.username], (err, row) => {
-            //   if(err) {
-            //     return console.log(err);
-            //   }
-            // });
-
-            // if(typeof result != 'undefined') {
-            //   if(result.lives === 0) {
-            //     client.say(target,`@${context.username}, você tem ${result.lives} vidas`);
-            //     return;
-            //   }
-            // } else {
-            //   client.say(target,`Sem jogo ativo @${context.username}`);
-            // }
-            break;
-          case '!participar':
-            if(gameID === 0) return
-
+          if(typeof result != 'undefined') {
             let pastTime = getMinutesBetweenDates(gameStartTime, new Date());
-            if(pastTime > 1) {
-              client.say(target, `@${context.username} o jogo já começou, vai ter que ficar para o próximo :/`);
+            let secs = Math.ceil(map(pastTime, 0,1,60,0));
+            if(pastTime < 1) {
+              client.say(target, `Ainda faltam ${secs} segundos pro jogo começar!`);
               return;
             }
 
+            console.log(`@${context.username} vidas ${result.lives}  gameID ${gameID}`);
+            if(result.lives === 0) {
+              client.say(target,`@${context.username}, morto não fala, nunca mais! :P`);
+              return;
+            }
+          } else {
+            client.say(target,`@${context.username}, para participar você precisa digitar !participar`);
+            return;
+          }
 
-            sql = `INSERT INTO hangman_players (hangman_gameid, twitch_account) values (${gameID},"${context.username}")`;
-            await db.run(sql);
-            // calcular tempo para por nos segundos
-            let secs = Math.ceil(map(pastTime, 0,1,60,0));
-            client.say(target, `@${context.username} você está participando do jogo, que vai começar daqui ${secs} segundos.`);
+
+          wordToSearch = String(parsedMessage[1]).toLowerCase();
+          if(hangword.indexOf(wordToSearch) == -1) {
+            // tira ponto
+            sql = "UPDATE hangman_players SET lives = lives - 1 where hangman_gameid = ? AND twitch_account = ?";
+            await db.run(sql,[gameID, context.username]);
+            if(result.lives-1 == 0 ) {
+              client.say(target,`@${context.username}, você morreu!`);
+            } else {
+              client.say(target,`@${context.username}, errou e agora só resta ${result.lives-1} vidas`);
+            }
+
+          } else {
+            client.say(target,`@${context.username}, bom palpite`);
+            for (let index = 0; index < hangword.length; index++) {
+              if(hangword.charAt(index) == wordToSearch) {
+                displayText =replaceAt(index, wordToSearch, displayText);
+              }
+            }
+            matrixFixMessage(mqtt, displayText);
+
+            if(displayText == hangword) {
+              isGameFinished = true;
+              // sql = "UPDATE hangman_games SET winner = 'OK' where id = ?";
+              // await db.run(sql,[gameID]);
+              endGame(gameID);
+
+              client.say(target, `Parabéns CHAT \\o/, a palavra era ${hangword}`);
+              setTimeout(() => {
+                messages.push("\\o/ Parabens CHAT");
+              }, 2000);
+              gameID = 0;
+              sound.play(`${__dirname}\\audio\\forca\\vitoria0${randomInt(1,7)}.mp3`)
+                .then((response) => {})
+                .catch((error) => {
+                  console.error(error);
+                });
+            }
+          }
+          break;
+        case '!lives':
+        case '!vidas':
+          // sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
+          // const result = await db.get(sql, [gameID, context.username], (err, row) => {
+          //   if(err) {
+          //     return console.log(err);
+          //   }
+          // });
+
+          // if(typeof result != 'undefined') {
+          //   if(result.lives === 0) {
+          //     client.say(target,`@${context.username}, você tem ${result.lives} vidas`);
+          //     return;
+          //   }
+          // } else {
+          //   client.say(target,`Sem jogo ativo @${context.username}`);
+          // }
+          break;
+        case '!participar':
+          if(gameID === 0) return
+
+          let pastTime = getMinutesBetweenDates(gameStartTime, new Date());
+          if(pastTime > 1) {
+            client.say(target, `@${context.username} o jogo já começou, vai ter que ficar para o próximo :/`);
+            return;
+          }
+
+          sql = `INSERT INTO hangman_players (hangman_gameid, twitch_account) values (${gameID},"${context.username}")`;
+          await db.run(sql);
+          // calcular tempo para por nos segundos
+          let secs = Math.ceil(map(pastTime, 0,1,60,0));
+          client.say(target, `@${context.username} você está participando do jogo, que vai começar daqui ${secs} segundos.`);
+          break;
+        case '!hangman':
+        case '!forca':
+          inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
+        case '!fimforca':
+          if(context.username !== 'kaduzius') return;
+          endGame(gameID);
+          break;
+        default:
             break;
-          case '!hangman':
-          case '!forca':
-            inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
-          case '!fimforca':
-            if(context.username !== 'kaduzius') return;
-            endGame(gameID);
-            break;
-          default:
-              break;
-        }
-    });
+      }
+  });
+
+  mqtt.on('message',async function (topic, message) {
+    if((topic.toString() == 'homie/ledmatrix/message/state') && (message.toString() == "Idle")) {
+      if(gameID > 0) {
+        matrixFixMessage(mqtt,displayText, false);
+      }
+    }
+  });
 };
