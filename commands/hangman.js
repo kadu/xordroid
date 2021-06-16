@@ -19,6 +19,11 @@ let gameStartTime;
 let sql;
 let gameTimer;
 
+function matrixFixMessage(mqtt, message) {
+  mqtt.publish("homie/ledmatrix/message/state", "Idle");
+  mqtt.publish("homie/ledmatrix/message/fixmessage/set", message);
+}
+
 async function finalizarForca(id, client) {
   const result = await db.get("SELECT * FROM hangman_games hg2 WHERE hg2.id = ?", [id], (err, row) => {
     if(err) {
@@ -78,9 +83,7 @@ async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue,
     else {
       client.say("kaduzius", `Dica: Essa palavra não tem dica KKKK kappa`);
     }
-
-    mqtt.publish("homie/ledmatrix/message/state", "Idle");
-    mqtt.publish("homie/ledmatrix/message/fixmessage/set", displayText);
+    matrixFixMessage(mqtt, displayText);
   }
   else {
     client.say("kaduzius","Existe um jogo aberto, manda um !participar e jogue você tambem");
@@ -189,6 +192,23 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
               return;
             }
 
+
+            sql = "select sum(lives) as totallives from hangman_players hp where hp.hangman_gameid  = ?"
+            const result0 = await db.get(sql, [gameID], (err, row) => {
+              if(err) {
+                return console.log(err);
+              }
+            });
+
+            if(typeof result0 != 'undefined') {
+              if((result0.totallives) - 1 === 0) {
+                client.say(target, "Oxi, Só tem zumbi por aqui! Se quiser, comece outro jogo mandando !forca");
+                endGame(gameID);
+                return;
+              }
+            }
+
+
             // get users lives
             sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
             const result = await db.get(sql, [gameID, context.username], (err, row) => {
@@ -234,8 +254,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                   displayText =replaceAt(index, wordToSearch, displayText);
                 }
               }
-              mqtt.publish("homie/ledmatrix/message/state", "Idle");
-              mqtt.publish("homie/ledmatrix/message/fixmessage/set", displayText);
+              matrixFixMessage(mqtt, displayText);
 
               if(displayText == hangword) {
                 isGameFinished = true;
@@ -243,7 +262,10 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                 // await db.run(sql,[gameID]);
                 endGame(gameID);
 
-                client.say(target, `Parabéns CHAT \\o/, a palavra foi revelada!`);
+                client.say(target, `Parabéns CHAT \\o/, a palavra era ${hangword}`);
+                setTimeout(() => {
+                  messages.push("\\o/ Parabens CHAT");
+                }, 2000);
                 gameID = 0;
                 sound.play(`${__dirname}\\audio\\forca\\vitoria0${randomInt(1,7)}.mp3`)
                   .then((response) => {})
