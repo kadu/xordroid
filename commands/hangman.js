@@ -210,6 +210,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
               }
             } else {
               client.say(target,`@${context.username}, para participar você precisa digitar !participar`);
+              return;
             }
 
 
@@ -296,4 +297,3 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
         }
     });
 };
-
