@@ -192,6 +192,23 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
               return;
             }
 
+
+            sql = "select sum(lives) as totallives from hangman_players hp where hp.hangman_gameid  = ?"
+            const result0 = await db.get(sql, [gameID], (err, row) => {
+              if(err) {
+                return console.log(err);
+              }
+            });
+
+            if(typeof result0 != 'undefined') {
+              if((result0.totallives) - 1 === 0) {
+                client.say(target, "Oxi, Só tem zumbi por aqui! Se quiser, comece outro jogo mandando !forca");
+                endGame(gameID);
+                return;
+              }
+            }
+
+
             // get users lives
             sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
             const result = await db.get(sql, [gameID, context.username], (err, row) => {
