@@ -38,7 +38,7 @@ OAUTH_TOKEN = process.env.OAUTH_TOKEN;
 exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
 
-    let proxima_data = "19/06/2021 teremos a presença da galera da missão Guilda Sat, @victorzonta, @grumpy_lele, @jcsound, @igorito_01 \\o/";
+    let proxima_data = "03/07/2021 - Um dos convidados será ninguem mais ninguem menos do que @JeyLAB_Robotica, os outros convidados ainda não confirmaram presença, mas vai ser legal, eu \"agarantcho\" \\o/";
 
     switch (message) {
         case '!cafemaker':
