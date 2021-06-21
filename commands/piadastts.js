@@ -1,11 +1,11 @@
 const bent      = require('bent');
-const { response } = require('express');
 const getJSON   = bent('json');
 const jsdom     = require("jsdom");
 const { JSDOM } = jsdom;
 
+const axios = require('axios');
+
 const jokeAPIURL = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
-const eltroblocks = "https://api.catarse.me/user_details?id=eq.1533481"
 const piadaAPIURL = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
 const piadasURL = "https://osvigaristas.com.br";
 const piadasURI = "/charadas/pagina#.html";
@@ -28,18 +28,19 @@ function getFunAudio() {
   return cartoonAudioURL + randomElement;
 }
 
-async function eletrocount() {
-  let retorno = await getJSON(eltroblocks);
-  return retorno[0].total_contributed_projects;
-}
-
 async function getPiada() {
-  const getStream = bent(piadasURL);
-  let stream = await getStream(piadasURI.replace("#",randomInt(1,33)));
-  const str = await stream.text();
-  const dom = new JSDOM(str);
-  value = dom.window.document.querySelector(`#main > article:nth-child(${randomInt(2,30)}) > div > div > div:nth-child(2) > div`).textContent.trim().toLocaleLowerCase();
-  return value;
+  let url = piadasURL+piadasURI;
+  url = url.replace("#",randomInt(1,33));
+
+  try {
+    const response = await axios.get(url);
+    const dom = new JSDOM(response.data);
+    value = dom.window.document.querySelector(`#main > article:nth-child(${randomInt(2,30)}) > div > div > div:nth-child(2) > div`).textContent.trim().toLocaleLowerCase();
+    return value;
+  } catch (err) {
+    console.log(err);
+  }
+  return "";
 }
 
 exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
@@ -57,8 +58,12 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
                 msgpiada = response.setup + "|" +  response.delivery; //#TODO melhorar essa concatenacao
               }
 
-              client.say(target, msgpiada);
-              ttsQueue.push( {'msg': msgpiada, 'lang': 'en','inputType': 'text'});
+              let audiomsgpiada = `<speak>${msgpiada}<audio src="${getFunAudio()}"/></speak>`;
+              audiomsgpiada = audiomsgpiada.replace("|", "<break time='1400ms'/>");
+              setTimeout(() => {
+                client.say(target, msgpiada.replace("|",""));
+              }, 3000);
+              ttsQueue.push( {'msg': audiomsgpiada, 'lang': 'en','inputType': 'ssml'});
               break;
 
             case '!piada':
@@ -71,10 +76,6 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
 
             case '!piadateste':
               getPiada();
-              break;
-            case '!eletrocount':
-              let valor = await eletrocount();
-              client.say(target, `a @julialabs e o eletroblocks já venderam ${valor} kits`);
               break;
             default:
                 break;
