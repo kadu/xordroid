@@ -5,7 +5,6 @@ const jsdom     = require("jsdom");
 const { JSDOM } = jsdom;
 
 const jokeAPIURL = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
-const eltroblocks = "https://api.catarse.me/user_details?id=eq.1533481"
 const piadaAPIURL = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
 const piadasURL = "https://osvigaristas.com.br";
 const piadasURI = "/charadas/pagina#.html";
@@ -26,11 +25,6 @@ function randomInt(min, max) {
 function getFunAudio() {
   const randomElement = cartoonAudios[Math.floor(Math.random() * cartoonAudios.length)];
   return cartoonAudioURL + randomElement;
-}
-
-async function eletrocount() {
-  let retorno = await getJSON(eltroblocks);
-  return retorno[0].total_contributed_projects;
 }
 
 async function getPiada() {
@@ -71,10 +65,6 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
 
             case '!piadateste':
               getPiada();
-              break;
-            case '!eletrocount':
-              let valor = await eletrocount();
-              client.say(target, `a @julialabs e o eletroblocks já venderam ${valor} kits`);
               break;
             default:
                 break;
