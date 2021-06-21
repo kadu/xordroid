@@ -1,8 +1,9 @@
 const bent      = require('bent');
-const { response } = require('express');
 const getJSON   = bent('json');
 const jsdom     = require("jsdom");
 const { JSDOM } = jsdom;
+
+const axios = require('axios');
 
 const jokeAPIURL = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
 const piadaAPIURL = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
@@ -28,12 +29,18 @@ function getFunAudio() {
 }
 
 async function getPiada() {
-  const getStream = bent(piadasURL);
-  let stream = await getStream(piadasURI.replace("#",randomInt(1,33)));
-  const str = await stream.text();
-  const dom = new JSDOM(str);
-  value = dom.window.document.querySelector(`#main > article:nth-child(${randomInt(2,30)}) > div > div > div:nth-child(2) > div`).textContent.trim().toLocaleLowerCase();
-  return value;
+  let url = piadasURL+piadasURI;
+  url = url.replace("#",randomInt(1,33));
+
+  try {
+    const response = await axios.get(url);
+    const dom = new JSDOM(response.data);
+    value = dom.window.document.querySelector(`#main > article:nth-child(${randomInt(2,30)}) > div > div > div:nth-child(2) > div`).textContent.trim().toLocaleLowerCase();
+    return value;
+  } catch (err) {
+    console.log(err);
+  }
+  return "";
 }
 
 exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
@@ -51,8 +58,12 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
                 msgpiada = response.setup + "|" +  response.delivery; //#TODO melhorar essa concatenacao
               }
 
-              client.say(target, msgpiada);
-              ttsQueue.push( {'msg': msgpiada, 'lang': 'en','inputType': 'text'});
+              let audiomsgpiada = `<speak>${msgpiada}<audio src="${getFunAudio()}"/></speak>`;
+              audiomsgpiada = audiomsgpiada.replace("|", "<break time='1400ms'/>");
+              setTimeout(() => {
+                client.say(target, msgpiada.replace("|",""));
+              }, 3000);
+              ttsQueue.push( {'msg': audiomsgpiada, 'lang': 'en','inputType': 'ssml'});
               break;
 
             case '!piada':
