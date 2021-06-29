@@ -38,7 +38,7 @@ OAUTH_TOKEN = process.env.OAUTH_TOKEN;
 exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
 
-    let proxima_data = "03/07/2021 - Um dos convidados será ninguem mais ninguem menos do que @JeyLAB_Robotica, os outros convidados ainda não confirmaram presença, mas vai ser legal, eu \"agarantcho\" \\o/";
+    let proxima_data = "03/07/2021 - Vamos conversar sobre Robotica Educacional com @JeyLAB_Robotica e o Prof. Orivaldo Santana, papo vai ser muito bacana, já coloca a Alexa pra dispertar ;)";
 
     switch (message) {
         case '!cafemaker':
