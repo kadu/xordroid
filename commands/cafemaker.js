@@ -41,22 +41,20 @@ exports.default = (client, obs, mqtt, messages) => {
     let proxima_data = "03/07/2021 - Vamos conversar sobre Robotica Educacional com @JeyLAB_Robotica e o Prof. Orivaldo Santana, papo vai ser muito bacana, já coloca a Alexa pra dispertar ;)";
 
     switch (message) {
-        case '!cafemaker':
-        case '!cafe':
-            client.say(
-                target,
-                `O Próximo Café Maker será dia ${proxima_data} as 10:00 am - Playlist no youtube  https://bit.ly/ytcafemaker`,
-            );
+        // case '!cafemaker':
+        // case '!cafe':
+        //     client.say(
+        //         target,
+        //         `O Próximo Café Maker será dia ${proxima_data} as 10:00 am - Playlist no youtube  https://bit.ly/ytcafemaker`,
+        //     );
 
-            setTimeout(() => {
-              client.say(
-                target,
-                `Aproveitando, tem um projeto? quer apresentar no café? prencha o formulário -> https://forms.gle/mb3TNDmu9wtZzsTe9`,
-              );
-            }, 2000);
-
-
-            break;
+        //     setTimeout(() => {
+        //       client.say(
+        //         target,
+        //         `Aproveitando, tem um projeto? quer apresentar no café? prencha o formulário -> https://forms.gle/mb3TNDmu9wtZzsTe9`,
+        //       );
+        //     }, 2000);
+        //     break;
         case '!ad':
           //https://github.com/hvilela0/DesktopJS/blob/master/modulos/ad.js
           client.commercial("kaduzius",60).then((data) => {
