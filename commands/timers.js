@@ -10,12 +10,12 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
     numMessages++;
   });
 
-  var job = new CronJob('40 * * * *', () => {
-    if (( Math.floor((new Date() - lastTime)/60000) > 20 ) && (lastUser !== "xordroid" ) && (numMessages > 10)){
-      client.say('#kaduzius','!cafe');
-      numMessages = 0;
-    }
-  }, null, true, 'America/Sao_Paulo');
+  // var job = new CronJob('40 * * * *', () => {
+  //   if (( Math.floor((new Date() - lastTime)/60000) > 20 ) && (lastUser !== "xordroid" ) && (numMessages > 10)){
+  //     client.say('#kaduzius','!cafe');
+  //     numMessages = 0;
+  //   }
+  // }, null, true, 'America/Sao_Paulo');
 
   job.start();
 };
