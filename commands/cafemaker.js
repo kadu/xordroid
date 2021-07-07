@@ -63,11 +63,6 @@ exports.default = (client, obs, mqtt, messages) => {
             console.log(chalk.redBright("***** COMERCIAL ****"));
             console.log(data);
           });
-        case '!arduinoday':
-          client.say(
-            target,
-            `Veja o vídeo do arduinoday aqui https://www.youtube.com/watch?v=jtolLoAbRh8`
-          );
           break;
         default:
             break;
