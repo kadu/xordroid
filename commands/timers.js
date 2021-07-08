@@ -17,5 +17,5 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
   //   }
   // }, null, true, 'America/Sao_Paulo');
 
-  job.start();
+  // job.start();
 };
