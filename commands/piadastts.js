@@ -7,7 +7,7 @@ const axios = require('axios');
 
 const jokeAPIURL = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
 const piadaAPIURL = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
-const piadasURL = "https://osvigaristas.com.br";
+const piadasURL = "https://www.osvigaristas.com.br";
 const piadasURI = "/charadas/pagina#.html";
 const cartoonAudioURL = "https://actions.google.com/sounds/v1/cartoon/";
 const cartoonAudios = [
