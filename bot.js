@@ -74,12 +74,12 @@ mqtt.on('connect', function () {
     if (!err) {
 			mqtt.publish('xordroid/weather/keepAlive', 'Hello mqtt');
 			console.log("MQTT Ready!");
-			mqtt.publish("wled/158690/api", "FX=80&SN=1");
-			mqtt.publish("wled/158690/col", "#7FFF00");
-      mqtt.publish("wled/158690", "ON");
-      mqtt.publish("homie/ledmatrix/matrix/on/set","true");
-      mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7C03F");
-      mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7609F");
+			// mqtt.publish("wled/158690/api", "FX=80&SN=1");
+			// mqtt.publish("wled/158690/col", "#7FFF00");
+      // mqtt.publish("wled/158690", "ON");
+      // mqtt.publish("homie/ledmatrix/matrix/on/set","true");
+      // mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7C03F");
+      // mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7609F");
 
     }
   });
