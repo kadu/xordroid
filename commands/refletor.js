@@ -17,7 +17,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                     mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF740BF");
                     break;
                   case "vermelho":
-                    mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF730CF");
+                    mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF720DF");
                     break;
                   case "azul":
                     mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7609F");
