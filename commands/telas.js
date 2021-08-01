@@ -70,6 +70,14 @@ exports.default = (client, obs, mqtt, messages) => {
       case '!webcam':
         changeScenes.change(client, obs, mqtt,"webcam");
         break;
+      case '!soldagem':
+      case '!solda':
+        changeScenes.change(client, obs, mqtt,"solda");
+        break;
+      case '!3D':
+      case '!3d':
+        changeScenes.change(client, obs, mqtt,"3d");
+        break;
       default:
         break;
     }

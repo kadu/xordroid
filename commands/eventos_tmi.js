@@ -10,10 +10,11 @@ exports.default = (client, obs, mqtt, messages) => {
       thing.client = client;
       thing.obs = obs;
       thing.mqtt = mqtt;
-      thing.currentScene = changeScenes.getCurrentScene();
+      thing.currentScene = changeScenes.getCurrentScene(obs);
 
-  function eventsMessage(effect, chat_message, led_message, timeoutTimer=20000) {
-    thing.currentScene = changeScenes.getCurrentScene();
+  async function eventsMessage(effect, chat_message, led_message, timeoutTimer=20000) {
+    thing.currentScene = await changeScenes.getCurrentScene(obs);
+    console.log(`Aqui é ${thing.currentScene}`);
     client.say(thing.client.channels[0], chat_message);
     mqtt.publish("wled/158690", "ON");
     if(effect == 100) {

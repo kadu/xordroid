@@ -6,14 +6,14 @@ function randomInt(min, max) {
 }
 
 exports.default = (client, obs, mqtt, messages) => {
-  client.on('message', (target, context, message, isBot) => {
+  client.on('message', async (target, context, message, isBot) => {
       if (isBot) return;
 
       var thing = this;
       thing.client = client;
       thing.obs = obs;
       thing.mqtt = mqtt;
-      thing.currentScene = changeScenes.getCurrentScene();
+      thing.currentScene = await changeScenes.getCurrentScene(obs);
 
       if(context.username == "streamlabs") {
         console.log("**** STREAMLABS MESSAGE ****");
@@ -30,6 +30,8 @@ exports.default = (client, obs, mqtt, messages) => {
           }).catch((error) => {
             console.error(error);
           });
+          thing.currentScene = await changeScenes.getCurrentScene(obs);
+          console.log(thing.currentScene);
           changeScenes.change(client, obs, mqtt, "webcam");
           try {
             setTimeout(()=> {

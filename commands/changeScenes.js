@@ -1,8 +1,13 @@
 let currentScene;
 let obsIsConnected = false;
 
+async function _getCurrentScene(obs) {
+  data = await obs.send('GetCurrentScene');
+  currentScene = data.name;
+}
+
 module.exports = {
-  default: function (client, obs, mqtt, messages) {
+  default(client, obs, mqtt, messages) {
     obs.on('SwitchScenes', data => {
       currentScene = data.sceneName;
     });
@@ -22,12 +27,14 @@ module.exports = {
     });
   },
 
-  getCurrentScene: function() {
+  async getCurrentScene(obs) {
+    await _getCurrentScene(obs);
     return currentScene;
   },
 
-  change: function (client, obs, mqtt, scene) {
-    if(!["Esquerda + Protobord", "FullScreen", "Esquerda + Webcam"].includes(currentScene)) {
+  async change(client, obs, mqtt, scene) {
+    await _getCurrentScene(obs);
+    if(!["Esquerda + Protobord", "FullScreen", "Esquerda + Webcam", "Soldagem", "Impressora3D"].includes(currentScene)) {
       return;
     }
 
@@ -42,6 +49,14 @@ module.exports = {
 
     if(scene == "tela" || scene == "Esquerda + Webcam" ) {
       newScene = "Esquerda + Webcam";
+    }
+
+    if(scene == "solda" || scene == "Soldagem") {
+      newScene = "Soldagem";
+    }
+
+    if(scene == "3d" || scene == "Impressora3D") {
+      newScene = "Impressora3D";
     }
 
     obs.send('SetCurrentScene', {
