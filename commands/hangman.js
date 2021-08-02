@@ -6,6 +6,8 @@ const getJSON         = bent('json');
 const jsdom           = require("jsdom");
 const { JSDOM }       = jsdom;
 
+const CP_Forca        = '72cbe921-36bc-4134-9f50-c488a21587c0';
+
 const sound           = require("sound-play");
 const dicionario      = "https://www.palabrasaleatorias.com";
 const dicionarioURI   = "/palavras-aleatorias.php?fs=1&fs2=0&Submit=Nova+palavra";
@@ -35,7 +37,7 @@ async function finalizarForca(id, client) {
 
   if(typeof result != 'undefined') {
     endGame(id);
-    client.say("kaduzius", `O jogo finalizou e infelizmente o Chat Perdeu :( - A palavra era ${hangword}`);
+    client.say(target, `O jogo finalizou e infelizmente o Chat Perdeu :( - A palavra era ${hangword}`);
   }
 }
 
@@ -203,7 +205,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
           });
 
           if(typeof result0 != 'undefined') {
-            if((result0.totallives) - 1 === 0) {
+            if((result0.totallives) === 0) {
               client.say(target, "Oxi, Só tem zumbi por aqui! Se quiser, comece outro jogo mandando !forca");
               endGame(gameID);
               return;
@@ -316,6 +318,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
         case '!fimforca':
           if(context.username !== 'kaduzius') return;
           endGame(gameID);
+          client.say(target, `Jogo finalizado a força pelo @kaduzius`);
           break;
         default:
             break;
@@ -327,6 +330,12 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
       if(gameID > 0) {
         matrixFixMessage(mqtt,displayText, false);
       }
+    }
+  });
+
+  client.on("raw_message", async (messageCloned, message) => {
+    if(message.tags['custom-reward-id'] === CP_Forca) {
+      inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
     }
   });
 };

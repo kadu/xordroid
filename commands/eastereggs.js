@@ -42,6 +42,9 @@ exports.default = (client, target, context, messages) => {
       case '!issues':
         client.say(target,`Tem alguma idéia pro XORdroid, coloca uma issue la no GitHub ;) -> https://github.com/kadu/xordroid/issues, Valeu!`);
         break;
+      case '!3bc':
+        client.say(target,`A linguagem de programção do Futuro -> https://3bc-lang.org!`);
+        break;
       default:
         break;
     }
