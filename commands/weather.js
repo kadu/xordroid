@@ -121,6 +121,15 @@ exports.dbweather_resume = async () => {
   return (result);
 }
 
+exports.dbweather_resume2 = async () => {
+  result = await db.all('select * from weathermap_resume2',[], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+  });
+
+  return (result);
+}
 
 process.on('SIGINT', function() {
   console.log("Caught interrupt signal");

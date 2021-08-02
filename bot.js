@@ -17,6 +17,7 @@ const dbweather = require("./commands/weather");
 const sse = require('easy-server-sent-events');
 const Discord = require('discord.js');
 const cDiscord = new Discord.Client();
+var cors = require('cors');
 
 const clienttts = new textToSpeech.TextToSpeechClient();
 async function playTTS(message) {
@@ -189,6 +190,7 @@ readdirSync(`${__dirname}/commands`)
 
 
 
+app.use(cors());
 app.use(SSE);
 
 // #webserver
@@ -199,6 +201,9 @@ app.get('/api', async (req, res) => {
 });
 app.get('/average', async (req, res) => {
   return res.json(await dbweather.dbweather_resume());
+});
+app.get('/average2', async (req, res) => {
+  return res.json(await dbweather.dbweather_resume2());
 });
 
 app.listen(3000, () => {
