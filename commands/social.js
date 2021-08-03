@@ -52,7 +52,9 @@ exports.default = (client, obs, mqtt, messages) => {
       case '!comandos':
         client.say(target, 'A lista ficou grande, bora ver todos os comandos aqui -> https://www.kaduzi.us/twitch-comandos');
         break;
-
+      case '!prime':
+        client.say(target, 'Tem Amazon Prime e ainda não vinculou sua conta ? Faça isso, aproveite e escorrega o Prime aqui e apoie o canal -> 1. Acesse https://gaming.amazon.com |-| 2. Faca login na sua conta da amazon.com.br |-| 3. Selecione vincular conta da Twitch |-| 4. Faca login na sua conta da Twitch e selecione Confirmar. |-| 5. Volte aqui no canal do Kaduzius, clique em Inscrever-se! - E já fica aqui o meu muito obrigado!!');
+        break;
       default:
         break;
     }

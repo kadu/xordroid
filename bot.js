@@ -175,6 +175,12 @@ setInterval(() => {
   }
 }, 3600000);
 
+setInterval(() => {
+  if(isStreamON) {
+    client.say("#kaduzius", '!prime');
+  }
+}, 72*60000);
+
 const options = {
   endpoint: '/api/sse',
   script: '/sse.js'
