@@ -45,6 +45,9 @@ exports.default = (client, target, context, messages) => {
       case '!3bc':
         client.say(target,`A linguagem de programção do Futuro -> https://3bc-lang.org!`);
         break;
+      case '!cachorro':
+        client.say(target,`Putz, eu não tenho cachorro, mas eu sei que o @leo_churrasqueiro tem um que fica latindo na live, cola lá conhecer o cachorro dele!`);
+        break;
       default:
         break;
     }
