@@ -259,6 +259,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
               }
             }
             matrixFixMessage(mqtt, displayText);
+            client.say(target, `Forca -> ${displayText}`);
 
             if(displayText == hangword) {
               isGameFinished = true;
@@ -266,7 +267,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
               // await db.run(sql,[gameID]);
               endGame(gameID);
 
-              client.say(target, `Parabéns CHAT \\o/, a palavra era ${hangword}`);
+              client.say(target, `Parabéns CHAT \\o/, a palavra era -> TwitchLit ${hangword} CurseLit`);
               setTimeout(() => {
                 messages.push("\\o/ Parabens CHAT");
               }, 2000);
@@ -315,10 +316,12 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
         case '!hangman':
         case '!forca':
           inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
+          break;
         case '!fimforca':
           if(context.username !== 'kaduzius') return;
-          endGame(gameID);
           client.say(target, `Jogo finalizado a força pelo @kaduzius`);
+          messages.push('Jogo finalizado a forca');
+          endGame(gameID);
           break;
         default:
             break;
