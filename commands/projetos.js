@@ -58,6 +58,9 @@ exports.default = (client, obs, mqtt, messages) => {
               case '!washmachine':
                 client.say(target,`Como deixar sua maquina de lavar inteligente -> https://github.com/kadu/smartwashmachine`);
                 break;
+              case '!pomodoro':
+                client.say(target,`Que tal usar leds para contar seus pomodoros -> https://github.com/kadu/ledRingPomodoroTimer`);
+                break;
             default:
                 break;
         }

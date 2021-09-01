@@ -1,13 +1,44 @@
-const dotenv = require('dotenv');
+const sqlite3     = require('sqlite3').verbose();
+const sqlite      = require('sqlite');
+const dotenv      = require('dotenv');
+const TTS_ENABLED = process.env.TTS_ENABLED;
+
 dotenv.config();
 
-const TTS_ENABLED = process.env.TTS_ENABLED;
+async function createDB() {
+  try {
+    db = await sqlite.open({ filename: './databases/xordroid.db', driver: sqlite3.Database });
+       await db.run(`CREATE TABLE IF NOT EXISTS environment ( 'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'tts' BOOLEAN default TRUE, 'ttsgoogle' BOOLEAN default TRUE,'telas' BOOLEAN default TRUE,'forca' BOOLEAN default TRUE,'ttspiada' BOOLEAN default TRUE);`);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+createDB();
+
+async function loadEnvironment() {
+  sql = "SELECT *  from environment e WHERE e.id = (SELECT max(id) FROM environment)";
+  const result = await db.get(sql, [], (err, row) => {
+    if(err) {
+      return console.log(err);
+    }
+  });
+
+  console.table(result);
+
+  // if(typeof result != 'undefined') {
+
+  //   gameID = result.id;
+  //   return true;
+  // } else {
+  //   return false;
+  // }
+}
+let isTTSEnabled = TTS_ENABLED == "true";
 
 exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
     client.on('message', (target, context, message, isBot) => {
         if (isBot) return;
-
-        const isTTSEnabled = TTS_ENABLED == "true";
 
         let ttsCommands=[];
         let coolDownControl=[];
@@ -44,6 +75,16 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
         ];
 
         let parsedMessage = message.split(" ");
+        if(parsedMessage[0] == '!ttsoff') {
+          if(context.username !== 'kaduzius') return;
+          client.say(target, 'TTS Desabilitado');
+          isTTSEnabled = false;
+        }
+        if(parsedMessage[0] == '!ttson') {
+          if(context.username !== 'kaduzius') return;
+          client.say(target, 'TTS Habilitado');
+          isTTSEnabled = true;
+        }        
 
         TTSLanguage.forEach((command) => {
           if(parsedMessage[0] === command.command) {
