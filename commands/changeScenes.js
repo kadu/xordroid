@@ -34,13 +34,13 @@ module.exports = {
 
   async change(client, obs, mqtt, scene) {
     await _getCurrentScene(obs);
-    if(!["Esquerda + Protobord", "FullScreen", "Esquerda + Webcam", "Soldagem", "Impressora3D"].includes(currentScene)) {
+    if(!["Esquerda + Protoboard", "FullScreen", "Esquerda + Webcam", "Soldagem", "Impressora3D"].includes(currentScene)) {
       return;
     }
 
     let newScene;
-    if(scene == "proto" || scene == "Esquerda + Protobord") {
-      newScene = "Esquerda + Protobord";
+    if(scene == "proto" || scene == "Esquerda + Protoboard") {
+      newScene = "Esquerda + Protoboard";
     }
 
     if(scene == "webcam" || scene == "FullScreen") {
@@ -62,7 +62,7 @@ module.exports = {
     obs.send('SetCurrentScene', {
       'scene-name': newScene
     }).catch(error => {
-      console.log("*ChangeScenes* erro no setcurrentschene", error);
+      console.log(`*ChangeScenes* erro no setcurrentschene nova cena: ${newScene}`, error);
     });
 
   }
