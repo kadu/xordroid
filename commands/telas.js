@@ -30,6 +30,7 @@ exports.default = (client, obs, mqtt, messages) => {
 
   obs.on('SwitchScenes', data => {
     currentScene = data.sceneName;
+    console.log('Cena Atual ', currentScene);
   });
 
   obs.on("ConnectionClosed", (data) => {
@@ -45,7 +46,7 @@ exports.default = (client, obs, mqtt, messages) => {
       obs.send('GetCurrentScene')
         .then(data => {
           currentScene = data.name;
-          console.log("Cena atual ", currentScene);
+          // console.log("Cena atual ", currentScene);
         })
         .catch(() => {
           console.log("Algo aconteceu aqui!");
