@@ -1,6 +1,7 @@
 const sqlite3     = require('sqlite3').verbose();
 const sqlite      = require('sqlite');
 const dotenv      = require('dotenv');
+const logs        = require('./commons/log');
 const TTS_ENABLED = process.env.TTS_ENABLED;
 
 dotenv.config();
@@ -78,11 +79,13 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
         if(parsedMessage[0] == '!ttsoff') {
           if(context.username !== 'kaduzius') return;
           client.say(target, 'TTS Desabilitado');
+          logs.logs('TTS', 'Desabilitado', context.username);
           isTTSEnabled = false;
         }
         if(parsedMessage[0] == '!ttson') {
           if(context.username !== 'kaduzius') return;
           client.say(target, 'TTS Habilitado');
+          logs.logs('TTS', 'Habilitado', context.username);
           isTTSEnabled = true;
         }        
 
@@ -90,6 +93,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
           if(parsedMessage[0] === command.command) {
             if(!isTTSEnabled) {
               client.say(target, "TTS is disabled | TTS está desativado");
+              logs.logs('TTS', 'TTS Desabilitado!', context.username);
               return;
             }
 
@@ -99,8 +103,9 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
             //   date.getTime() <
             // });
 
-            let fullMessage = context["display-name"] + command.saidText  + " : " + message.replace(command.command,"");
+            let fullMessage = context["display-name"] + ' ' + command.saidText  + " : " + message.replace(command.command,"");
             ttsQueue.push( {'msg': fullMessage, 'lang': command.language,'inputType': 'text'});
+            logs.logs('TTS', `Mensagem [${command.language}] ${fullMessage}`, context.username);
           }
         });
     });
