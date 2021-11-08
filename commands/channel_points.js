@@ -12,10 +12,6 @@ exports.default = (client, obs, mqtt, messages) => {
           let sendcolor = await parseColor.parseColor(message.params[1]);
           if(sendcolor !== -1) {
             mqtt.publish("cmnd/lightrgb02/Color2", sendcolor);
-
-            // const silence = new botDB({ userid: `${message.tags['username']}`, points: 10 });
-            // silence.save();
-
           }
           else {
           }
@@ -25,7 +21,5 @@ exports.default = (client, obs, mqtt, messages) => {
           console.log(`Alguem (${message.tags['user-id']}) pediu uma recompensa `);
         }
       }
-
-
     });
 };
