@@ -1,5 +1,6 @@
+const chalk = require('chalk');
+const logs = require('./commons/log.js');
 const parseColor = require('./commons/parsecolor');
-const namedColors = require("color-name-list");
 const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -18,18 +19,22 @@ exports.default = (client, obs, mqtt, messages) => {
       if(parsedMessage[0] === "!led") {
         if(parsedMessage[1] === "ajuda") {
           client.say(client.channels[0], "!led liga | !led desliga | !led cor #RRGGBB | !led efeito [0-101]");
+          logs.logs('led', 'Ajuda', context.username);
         }
 
         if(parsedMessage[1] === "help") {
           client.say(client.channels[0], "!led on | !led off | !led color #RRGGBB | !led effect [0-101]");
+          logs.logs('led', 'Help', context.username);
         }
 
         if((parsedMessage[1] === "liga") || (parsedMessage[1] === "on")) {
           mqtt.publish("wled/158690", "ON");
+          logs.logs('led', 'Ligar', context.username);
         }
 
         if((parsedMessage[1] === "desliga") || (parsedMessage[1] === "off")) {
           mqtt.publish("wled/158690", "OFF");
+          logs.logs('led', 'Desligar', context.username);
         }
 
         if((parsedMessage[1] === "efeito") || (parsedMessage[1] === "effect")) {
@@ -40,6 +45,7 @@ exports.default = (client, obs, mqtt, messages) => {
             if(value >= 0 && value <= 101) {
               mqtt.publish("wled/158690", "ON");
               mqtt.publish("wled/158690/api", "FX=" + parsedMessage[2] + "&SN=1");
+              logs.logs('led', `Mudando efeito para ${parsedMessage[2]}`, context.username);
             }
           }
         }
@@ -52,6 +58,7 @@ exports.default = (client, obs, mqtt, messages) => {
           } else {
             mqtt.publish("wled/158690", "ON");
             mqtt.publish("wled/158690/col", sendcolor);
+            logs.logs('led', `Mudando cor para ` + chalk.hex(sendcolor).inverse(sendcolor), context.username);
           }
         }
       }
