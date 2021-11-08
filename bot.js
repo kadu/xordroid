@@ -188,13 +188,16 @@ const options = {
 const {SSE, send, openSessions, openConnections} = sse(options);
 
 
+
+console.log("Loading BOT modules:");
+console.log("--------------------");
 readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
   .forEach((file) => {
+    console.log(`${file}`);
 		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
   });
-
-
+console.log("Loaded\n\n");
 
 app.use(cors());
 app.use(SSE);
