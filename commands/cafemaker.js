@@ -1,6 +1,7 @@
-const axios = require('axios').default;
+const axios  = require('axios').default;
 const dotenv = require('dotenv');
-const chalk = require('chalk');
+const chalk  = require('chalk');
+const logs   = require('./commons/log');
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ exports.default = (client, obs, mqtt, messages) => {
               `Aproveitando, tem um projeto? quer apresentar no café? prencha o formulário -> https://forms.gle/mb3TNDmu9wtZzsTe9`,
             );
           }, 2000);
+          logs.logs('Cafe Maker', '', context.username);
           break;        
         default:
           break;
