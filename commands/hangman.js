@@ -1,3 +1,5 @@
+//  https://www.linuxuprising.com/2021/03/how-to-get-sound-pulseaudio-to-work-on.html
+
 // const { response } = require('express');
 const sqlite3         = require('sqlite3').verbose();
 const sqlite          = require('sqlite');
@@ -8,7 +10,7 @@ const { JSDOM }       = jsdom;
 
 const CP_Forca        = '72cbe921-36bc-4134-9f50-c488a21587c0';
 
-const sound           = require("sound-play");
+const sound           = require("play-sound")(opts = {});
 const dicionario      = "https://www.palabrasaleatorias.com";
 const dicionarioURI   = "/palavras-aleatorias.php?fs=1&fs2=0&Submit=Nova+palavra";
 const dicPalavra      = "https://api.dicionario-aberto.net/word/#/1";
@@ -272,31 +274,11 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                 messages.push("\\o/ Parabens CHAT");
               }, 2000);
               gameID = 0;
-              sound.play(`${__dirname}\\audio\\forca\\vitoria0${randomInt(1,7)}.mp3`)
-                .then((response) => {})
-                .catch((error) => {
-                  console.error(error);
-                });
+              sound.play(`${__dirname}/audio/forca/vitoria0${randomInt(1,7)}.mp3`, function(err){
+                if (err) throw err
+              });
             }
           }
-          break;
-        case '!lives':
-        case '!vidas':
-          // sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
-          // const result = await db.get(sql, [gameID, context.username], (err, row) => {
-          //   if(err) {
-          //     return console.log(err);
-          //   }
-          // });
-
-          // if(typeof result != 'undefined') {
-          //   if(result.lives === 0) {
-          //     client.say(target,`@${context.username}, você tem ${result.lives} vidas`);
-          //     return;
-          //   }
-          // } else {
-          //   client.say(target,`Sem jogo ativo @${context.username}`);
-          // }
           break;
         case '!participar':
           if(gameID === 0) return
