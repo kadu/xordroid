@@ -6,13 +6,11 @@ const getJSON         = bent('json');
 const jsdom           = require("jsdom");
 const { JSDOM }       = jsdom;
 const logs            = require('./commons/log');
-
-const CP_Forca        = '72cbe921-36bc-4134-9f50-c488a21587c0';
-
 const sound           = require("play-sound")(opts = {});
 const dicionario      = "https://www.palabrasaleatorias.com";
 const dicionarioURI   = "/palavras-aleatorias.php?fs=1&fs2=0&Submit=Nova+palavra";
 const dicPalavra      = "https://api.dicionario-aberto.net/word/#/1";
+const CP_Forca        = '72cbe921-36bc-4134-9f50-c488a21587c0';
 let gameID            = 0;
 let hangword          = "";
 let displayText       = "";
