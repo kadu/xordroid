@@ -1,11 +1,11 @@
-const bent = require('bent');
+const bent    = require('bent');
 const getJSON = bent('json');
-const idadeURL = "https://api.agify.io?name=";
-const generoURL = "https://api.genderize.io?name=";
+const logs    = require('./commons/log');
 const nacionalidadeURL = "https://api.nationalize.io/?name=";
-const paisInfoURL = "https://restcountries.eu/rest/v2/alpha/"
-const urlLocalization = "&country_id=BR";
-
+const paisInfoURL      = "https://restcountries.com/v2/name/"
+const generoURL        = "https://api.genderize.io?name=";
+const idadeURL         = "https://api.agify.io?name=";
+const urlLocalization  = "&country_id=BR";
 
 exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) => {
     client.on('message', async (target, context, message, isBot) => {
@@ -16,6 +16,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
         switch (parsedMessage[0]) {
             case '!nome':
             case '!quemsoueu':
+              logs.logs('Quem sou eu', parsedMessage[0], context.username);
               if(parsedMessage[1] === undefined) {
                 client.say(target, 'Necessário enviar um nome, exemplo !quemsoueu Carlos');
                 break;
@@ -36,7 +37,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                 client.say(target, 'Foi mal, nao achei esse nome');
                 paises = `(não vem, sem nacionalidade)`;
               } else {
-                response2   = await getJSON(`${paisInfoURL}${response.country[0].country_id}`);
+                let [response2]   = await getJSON(`${paisInfoURL}${response.country[0].country_id}`);
                 paises = `${response2.translations.br} (${response.country[0].probability.toFixed(2)*100}%)`
               }
 
