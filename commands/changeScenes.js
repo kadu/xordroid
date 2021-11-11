@@ -53,6 +53,7 @@ module.exports = {
 
     if(scene == "solda" || scene == "Soldagem") {
       newScene = "Soldagem";
+      mqtt.publish("homie/lampadaiot/light/on/set", "false");
     }
 
     if(scene == "3d" || scene == "Impressora3D") {
