@@ -1,23 +1,23 @@
 const { readdirSync } = require('fs');
-const dotenv = require('dotenv');
 const OBSWebSocket = require('obs-websocket-js');
-const obs = new OBSWebSocket();
-const tmi = require('tmi.js');
-const MQTT = require("mqtt");
-const { Console } = require('console');
-const sound = require("sound-play");
 const textToSpeech = require('@google-cloud/text-to-speech');
-const fs = require('fs');
-const util = require('util');
-const chalk = require('chalk');
-const express = require('express');
-var favicon = require('serve-favicon');
-const app = express();
+const { Console }  = require('console');
+const sound     = require("play-sound")(opts = {});
+const dotenv    = require('dotenv');
+const obs       = new OBSWebSocket();
+const tmi       = require('tmi.js');
+const MQTT      = require("mqtt");
+const fs        = require('fs');
+const util      = require('util');
+const chalk     = require('chalk');
+const express   = require('express');
+var favicon     = require('serve-favicon');
+const app       = express();
 const dbweather = require("./commands/weather");
-const sse = require('easy-server-sent-events');
-const Discord = require('discord.js');
-const cDiscord = new Discord.Client();
-var cors = require('cors');
+const sse       = require('easy-server-sent-events');
+const Discord   = require('discord.js');
+const cDiscord  = new Discord.Client();
+var cors        = require('cors');
 
 const clienttts = new textToSpeech.TextToSpeechClient();
 async function playTTS(message) {
@@ -35,11 +35,8 @@ async function playTTS(message) {
   const writeFile = util.promisify(fs.writeFile);
   const ttsTempFile = `${__dirname}\\temp\\output.m4a`;
   await writeFile(ttsTempFile, response.audioContent, 'binary');
-  sound.play(ttsTempFile).then((response) => {
+  sound.play(ttsTempFile, (fim) => {
     isPlayingTTS = false;
-  }).catch((error) => {
-    isPlayingTTS = false;
-    console.error(error);
   });
 }
 
@@ -143,41 +140,18 @@ client.on("join", (channel, username, self) => {
 client.connect();
 
 obs.on("StreamStarted", (data) => {
-  console.log(chalk.blueBright("Stream is ON LINE"));
+  console.log(chalk.bgWhiteBright.inverse("Stream is ON LINE"));
   isStreamON = true;
 });
 
 obs.on("StreamStopped", (data) => {
-  console.log(chalk.blueBright("Stream is OFFLINE"));
+  console.log(chalk.bgWhiteBright.inverse("Stream is OFFLINE"));
   isStreamON = false;
 });
 
 setInterval(() => {
   if(isStreamON) {
-    client.commercial("kaduzius",60).then((data) => {
-      console.log(chalk.redBright("***** COMERCIAL ****"));
-      console.log(data);
-
-
-      sound.play(`${__dirname}\\audio\\alarme\\a01.mp3`).then((response) => {
-        isPlayingTTS = false;
-      }).catch((error) => {
-        isPlayingTTS = false;
-        console.error(error);
-      });
-
-
-    })
-    .catch((err) => {
-      console.log("*****ERRO COMERCIAL ****");
-      console.log(err);
-    });
-  }
-}, 3600000);
-
-setInterval(() => {
-  if(isStreamON) {
-    client.say("#kaduzius", '!prime');
+    client.say("#kaduzius", 'Tem Amazon Prime e ainda não vinculou sua conta ? Faça isso, aproveite e escorrega o Prime aqui e apoie o canal -> 1. Acesse https://gaming.amazon.com |-| 2. Faca login na sua conta da amazon.com.br |-| 3. Selecione vincular conta da Twitch |-| 4. Faca login na sua conta da Twitch e selecione Confirmar. |-| 5. Volte aqui no canal do Kaduzius, clique em Inscrever-se! - E já fica aqui o meu muito obrigado!!');
   }
 }, 72*60000);
 
@@ -189,15 +163,47 @@ const {SSE, send, openSessions, openConnections} = sse(options);
 
 
 
-console.log("Loading BOT modules:");
-console.log("--------------------");
-readdirSync(`${__dirname}/commands`)
-  .filter((file) => file.slice(-3) === '.js')
-  .forEach((file) => {
-    console.log(`${file}`);
-		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
-  });
-console.log("Loaded\n\n");
+// console.log("Loading BOT modules:");
+// console.log("--------------------");
+// readdirSync(`${__dirname}/commands`)
+//   .filter((file) => file.slice(-3) === '.js')
+//   .forEach((file) => {
+//     console.log(`${file}`);
+// 		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
+//   });
+// console.log("Loaded\n\n");
+
+let arquivos = [
+  'base.js',
+  'annotations.js',
+  'cafemaker.js',
+  'cansado.js',
+  'channel_points.js',
+  'eastereggs.js',
+  'fun_apis.js',
+  'hangman.js',
+  'ledstrip.js',
+  'matrix.js',
+  'piadastts.js',
+  'projetos.js',
+  'quemsoueu.js',
+  'refletor.js',
+  'sh-so.js',
+  'social.js',
+  'soul.js',
+  'timers.js',
+  'tts.js',
+  'weather.js',
+  'youtube_counter.js',
+  'changeScenes.js',
+  'telas.js'
+];
+
+arquivos.forEach(arquivo => {
+  console.log(" ===> Modulo ", arquivo);
+  require(`./commands/${arquivo}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
+});
+console.log("");
 
 app.use(cors());
 app.use(SSE);
