@@ -1,4 +1,5 @@
 const changeScenes = require("./changeScenes");
+const logs = require('./commons/log');
 
 exports.default = (client, obs, mqtt, messages) => {
   let currentScene;
@@ -14,6 +15,7 @@ exports.default = (client, obs, mqtt, messages) => {
       })
       .catch(error => {
         var dt = new Date();
+        console.log('Erro OBS:> ', error);
 
         if(!OBSFaultMessage) {
           console.log("[" + dt.getHours() + ":" + dt.getMinutes() + "] Nao conseguiu conectar no OBS");
@@ -25,6 +27,7 @@ exports.default = (client, obs, mqtt, messages) => {
   client.on('connected', (address, port) => {
     mqtt.publish("xordroid/weather/on", "");
     mqtt.publish("wled/158690", "ON");
+    mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7C03F");
     obsConnection();
   });
 
@@ -56,6 +59,10 @@ exports.default = (client, obs, mqtt, messages) => {
 
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
+    if(OBSFaultMessage) {
+      logs.logs('Telas', 'Não está conectado ao OBS (websocket)', context.username);
+      return;
+    }
 
     switch (message) {
       case '!tela':
