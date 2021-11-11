@@ -58,8 +58,8 @@ exports.default = (client, obs, mqtt, messages) => {
                   let textHelper = response?.joke.replaceAll('.',';');
                   translated = await translate(textHelper, { from: 'en', to: 'pt' });
 
-                  console.log(response);
-                  console.log(translated);
+                  // console.log(response);
+                  // console.log(translated);
 
                   client.say(
                       target,
