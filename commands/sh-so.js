@@ -1,6 +1,7 @@
 const sqlite3      = require('sqlite3').verbose();
 const { response } = require('express');
 const sqlite       = require('sqlite');
+const chalk        = require('chalk');
 const logs         = require('./commons/log');
 
 async function createDB() {
@@ -33,10 +34,12 @@ exports.default = (client, obs, mqtt, messages) => {
           if(typeof parsedMessage[1] == 'undefined') return; // forgot to send the streamer
           const streamer = parsedMessage[1].toLowerCase().replace('@','');
           await db.run("INSERT INTO sh_so (streamer, added_by)  VALUES(?,?)", [streamer, context.username]);
-          logs.logs('SH SO', `Streamer added ${streamer}`, context.username);
+          logs.logs('SH SO', `Streamer added `+ chalk.greenBright.bold(`${streamer}`), context.username);
+          client.say(client.channels[0], `feito!`);
         } catch (error) {
           const streamer = parsedMessage[1].toLowerCase().replace('@','');
-          logs.logs('SH SO', ` Não consegui adicionar ${streamer} \n\t Motivo: ${error}`, context.username);
+          logs.logs('SH SO', ` Não consegui adicionar `+ chalk.redBright.bold(`${streamer}`) + ` \n\t Motivo: ${error}`, context.username);
+          client.say(client.channels[0], `já estava anotado ;)`);
         }
         break;
       default:
