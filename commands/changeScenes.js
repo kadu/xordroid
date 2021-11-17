@@ -13,26 +13,29 @@ module.exports = {
     });
 
     obs.on("ConnectionOpened", (data) => {
-      if(obsIsConnected) {
-        obsIsConnected = true;
-        obs.send('GetCurrentScene')
-          .then(data => {
-            currentScene = data.name;
-            console.log("Cena atual ", currentScene);
-          })
-          .catch(() => {
-            console.log("Algo aconteceu aqui!");
-          });
-      }
+      obsIsConnected = true;
+      obs.send('GetCurrentScene')
+        .then(data => {
+          currentScene = data.name;
+          console.log("Cena atual ", currentScene);
+        })
+        .catch(() => {
+          console.log("Algo aconteceu aqui!");
+        });
     });
   },
 
   async getCurrentScene(obs) {
+    if(!obsIsConnected) return;
     await _getCurrentScene(obs);
     return currentScene;
   },
 
   async change(client, obs, mqtt, scene) {
+
+    console.log('Conectado OBS? ', obsIsConnected);
+    if(!obsIsConnected) return;
+
     await _getCurrentScene(obs);
     if(!["Esquerda + Protoboard", "FullScreen", "Esquerda + Webcam", "Soldagem", "Impressora3D"].includes(currentScene)) {
       return;
