@@ -18,6 +18,7 @@ const sse       = require('easy-server-sent-events');
 const Discord   = require('discord.js');
 const cDiscord  = new Discord.Client();
 var cors        = require('cors');
+const { logs } = require('./commands/commons/log');
 
 const clienttts = new textToSpeech.TextToSpeechClient();
 async function playTTS(message) {
@@ -50,6 +51,8 @@ const MQTT_CLIENT = process.env.MQTT_CLIENT;
 const MQTT_USER = process.env.MQTT_USER;
 const MQTT_PW = process.env.MQTT_PW;
 const DISCORD_KEY = process.env.DISCORD_KEY;
+const GOOGLE_KEY = process.env.GOOGLE_KEY;
+process.env.GOOGLE_APPLICATION_CREDENTIALS = GOOGLE_KEY
 
 const mqtt_options = {
 	host: MQTT_HOST,
@@ -72,12 +75,6 @@ mqtt.on('connect', function () {
     if (!err) {
 			mqtt.publish('xordroid/weather/keepAlive', 'Hello mqtt');
 			console.log("MQTT Ready!");
-			// mqtt.publish("wled/158690/api", "FX=80&SN=1");
-			// mqtt.publish("wled/158690/col", "#7FFF00");
-      // mqtt.publish("wled/158690", "ON");
-      // mqtt.publish("homie/ledmatrix/matrix/on/set","true");
-      // mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7C03F");
-      // mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7609F");
 
     }
   });
@@ -163,47 +160,13 @@ const {SSE, send, openSessions, openConnections} = sse(options);
 
 
 
-// console.log("Loading BOT modules:");
-// console.log("--------------------");
-// readdirSync(`${__dirname}/commands`)
-//   .filter((file) => file.slice(-3) === '.js')
-//   .forEach((file) => {
-//     console.log(`${file}`);
-// 		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
-//   });
-// console.log("Loaded\n\n");
-
-let arquivos = [
-  'base.js',
-  'annotations.js',
-  'cafemaker.js',
-  'cansado.js',
-  'channel_points.js',
-  'eastereggs.js',
-  'fun_apis.js',
-  'hangman.js',
-  'ledstrip.js',
-  'matrix.js',
-  'piadastts.js',
-  'projetos.js',
-  'quemsoueu.js',
-  'refletor.js',
-  'sh-so.js',
-  'social.js',
-  'soul.js',
-  'timers.js',
-  'tts.js',
-  'weather.js',
-  'youtube_counter.js',
-  'changeScenes.js',
-  'telas.js'
-];
-
-arquivos.forEach(arquivo => {
-  console.log(" ===> Modulo ", arquivo);
-  require(`./commands/${arquivo}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
-});
-console.log("");
+readdirSync(`${__dirname}/commands`)
+  .filter((file) => file.slice(-3) === '.js')
+  .forEach((file) => {
+    logs("BOOTLOADER",`Loading module ${file}`, '')
+    require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
+  });
+  logs("BOOTLOADER",`Finished`, '');
 
 app.use(cors());
 app.use(SSE);
