@@ -1,5 +1,15 @@
 const changeScenes = require("./changeScenes");
 const logs = require('./commons/log');
+const fs = require('fs');
+let windowsIP;
+
+try {
+  const data = fs.readFileSync('/etc/resolv.conf', 'utf8');
+  let cortado = data.split(" ");
+  windowsIP = cortado[cortado.length-1]
+} catch (err) {
+  console.error(err)
+}
 
 exports.default = (client, obs, mqtt, messages) => {
   let currentScene;
@@ -7,7 +17,7 @@ exports.default = (client, obs, mqtt, messages) => {
   let OBSFaultMessage = false;
 
   function obsConnection() {
-    obs.connect()
+    obs.connect({ address: `${windowsIP}:4444`})
       .then(() => {
         obsIsConnected = true;
         console.log("Finalmente, conectado no OBS");
@@ -15,7 +25,7 @@ exports.default = (client, obs, mqtt, messages) => {
       })
       .catch(error => {
         var dt = new Date();
-        console.log('Erro OBS:> ', error);
+        // console.log('Erro OBS:> ', error);
 
         if(!OBSFaultMessage) {
           console.log("[" + dt.getHours() + ":" + dt.getMinutes() + "] Nao conseguiu conectar no OBS");
@@ -60,7 +70,7 @@ exports.default = (client, obs, mqtt, messages) => {
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
     if(OBSFaultMessage) {
-      logs.logs('Telas', 'Não está conectado ao OBS (websocket)', context.username);
+      logs.logs('Telas', 'Não está conectado ao OBS (websocket)', '');
       return;
     }
 
