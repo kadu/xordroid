@@ -1,6 +1,8 @@
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3      = require('sqlite3').verbose();
 const { response } = require('express');
-const sqlite = require('sqlite');
+const sqlite       = require('sqlite');
+const chalk        = require('chalk');
+const logs         = require('./commons/log');
 
 async function createDB() {
   try {
@@ -32,17 +34,12 @@ exports.default = (client, obs, mqtt, messages) => {
           if(typeof parsedMessage[1] == 'undefined') return; // forgot to send the streamer
           const streamer = parsedMessage[1].toLowerCase().replace('@','');
           await db.run("INSERT INTO sh_so (streamer, added_by)  VALUES(?,?)", [streamer, context.username]);
-          client.whisper(context.username, `Streamer added ${streamer}`)
-            .then((data)=> {
-              console.log(data);
-              console.log("mandou whisper");
-            }).catch((err) => {
-              console.log(`Deu erro no whisper do sh-so: ${err}`);
-            });
-          console.log(`Streamer added ${streamer}`);
+          logs.logs('SH SO', `Streamer added `+ chalk.greenBright.bold(`${streamer}`), context.username);
+          client.say(client.channels[0], `feito!`);
         } catch (error) {
-          console.log(`Error on add-streamer ${parsedMessage[1]} by ${context.username}`);
-          console.log(error);
+          const streamer = parsedMessage[1].toLowerCase().replace('@','');
+          logs.logs('SH SO', ` Não consegui adicionar `+ chalk.redBright.bold(`${streamer}`) + ` \n\t Motivo: ${error}`, context.username);
+          client.say(client.channels[0], `já estava anotado ;)`);
         }
         break;
       default:
@@ -73,6 +70,7 @@ exports.default = (client, obs, mqtt, messages) => {
     if(!mustShowStreamer) {
       messages.push(`Ola ${username}!`);
       client.say(client.channels[0], `!sh-so @${username}`);
+      logs.logs('SH SO', `@${username}` , '');
     }
   });
 };

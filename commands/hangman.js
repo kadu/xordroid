@@ -5,13 +5,13 @@ const bent            = require('bent');
 const getJSON         = bent('json');
 const jsdom           = require("jsdom");
 const { JSDOM }       = jsdom;
-
-const CP_Forca        = '72cbe921-36bc-4134-9f50-c488a21587c0';
-
-const sound           = require("sound-play");
+const logs            = require('./commons/log');
+const sound           = require("play-sound")(opts = {});
 const dicionario      = "https://www.palabrasaleatorias.com";
 const dicionarioURI   = "/palavras-aleatorias.php?fs=1&fs2=0&Submit=Nova+palavra";
 const dicPalavra      = "https://api.dicionario-aberto.net/word/#/1";
+const CP_Forca        = '72cbe921-36bc-4134-9f50-c488a21587c0';
+const dotenv          = require('dotenv');
 let gameID            = 0;
 let hangword          = "";
 let displayText       = "";
@@ -20,6 +20,7 @@ let isGameFinished    = true;
 let gameStartTime;
 let sql;
 let gameTimer;
+const [TWITCH_CHANNEL_NAME] = process.env.CHANNEL_NAME.split(',');
 
 function matrixFixMessage(mqtt, message, updateStete = true) {
   if(updateStete) {
@@ -37,7 +38,7 @@ async function finalizarForca(id, client) {
 
   if(typeof result != 'undefined') {
     endGame(id);
-    client.say(target, `O jogo finalizou e infelizmente o Chat Perdeu :( - A palavra era ${hangword}`);
+    client.say(TWITCH_CHANNEL_NAME, `O jogo finalizou e infelizmente o Chat Perdeu :( - A palavra era ${hangword}`);
   }
 }
 
@@ -62,10 +63,11 @@ async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue,
     });
 
     if(typeof result != 'undefined') {
-      client.say("kaduzius", "O jogo está iniciado, digita !participar para entrar no jogo! (Chat, vocês tem 1 minuto pra entrar)");
+      client.say(TWITCH_CHANNEL_NAME, "O jogo está iniciado, digita !participar para entrar no jogo! (Chat, vocês tem 1 minuto pra entrar)");
 
       setTimeout(() => {
-        client.say("kaduzius","Que começem os jogos! - Exemplo: !letra a");
+        client.say(TWITCH_CHANNEL_NAME,"Que começem os jogos! - Exemplo: !letra a");
+        logs.logs('Hangman', 'Jogo iniciado', '');
       }, 60000);
 
       gameID = result.id;
@@ -82,16 +84,18 @@ async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue,
 
     significado = await getTip(hangword);
     if(significado.length > 0) {
-      client.say("kaduzius", `Dica: ${hangmanTip}`);
+      client.say(TWITCH_CHANNEL_NAME, `Dica: ${hangmanTip}`);
     }
     else {
-      client.say("kaduzius", `Dica: Essa palavra não tem dica KKKK kappa`);
+      client.say(TWITCH_CHANNEL_NAME, `Dica: Essa palavra não tem dica KKKK kappa`);
+      logs.logs('Hangman', `Palavra sem dica ${hangword}`,'');
     }
     matrixFixMessage(mqtt, displayText);
   }
   else {
-    client.say("kaduzius","Existe um jogo aberto, manda um !participar e jogue você tambem");
+    client.say(TWITCH_CHANNEL_NAME,"Existe um jogo aberto, manda um !participar e jogue você tambem");
   }
+  logs.logs('Hangman', 'inicia_forca()', '');
 }
 
 function randomInt(min, max) {
@@ -124,6 +128,7 @@ async function endGame(gameID) {
   let retorno = await db.run(sql,[gameID]);
   clearTimeout(gameTimer);
   console.log(retorno);
+  logs.logs('Hangman', 'Fim de jogo', '');
 }
 
 async function createDB() {
@@ -189,8 +194,10 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
           else {
             client.say(target, `Dica: Essa palavra não tem dica KKKK kappa`);
           }
+          logs.logs('Hangman', parsedMessage[0], context.username);
           break;
         case '!letra':
+          logs.logs('Hangman', parsedMessage[0], context.username);
           if(isGameFinished) {
             client.say(target, `Poxa, a palavra já foi descoberta`);
             return;
@@ -272,34 +279,15 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                 messages.push("\\o/ Parabens CHAT");
               }, 2000);
               gameID = 0;
-              sound.play(`${__dirname}\\audio\\forca\\vitoria0${randomInt(1,7)}.mp3`)
-                .then((response) => {})
-                .catch((error) => {
-                  console.error(error);
-                });
+              sound.play(`${__dirname}/audio/forca/vitoria0${randomInt(1,7)}.mp3`, function(err){
+                if (err) throw err
+              });
             }
           }
           break;
-        case '!lives':
-        case '!vidas':
-          // sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
-          // const result = await db.get(sql, [gameID, context.username], (err, row) => {
-          //   if(err) {
-          //     return console.log(err);
-          //   }
-          // });
-
-          // if(typeof result != 'undefined') {
-          //   if(result.lives === 0) {
-          //     client.say(target,`@${context.username}, você tem ${result.lives} vidas`);
-          //     return;
-          //   }
-          // } else {
-          //   client.say(target,`Sem jogo ativo @${context.username}`);
-          // }
-          break;
         case '!participar':
           if(gameID === 0) return
+          logs.logs('Hangman', parsedMessage[0], context.username);
 
           let pastTime = getMinutesBetweenDates(gameStartTime, new Date());
           if(pastTime > 1) {
@@ -315,6 +303,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
           break;
         case '!hangman':
         case '!forca':
+          logs.logs('Hangman', parsedMessage[0], context.username);
           inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
           break;
         case '!fimforca':
