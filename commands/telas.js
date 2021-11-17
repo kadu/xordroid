@@ -35,9 +35,6 @@ exports.default = (client, obs, mqtt, messages) => {
   }
 
   client.on('connected', (address, port) => {
-    mqtt.publish("xordroid/weather/on", "");
-    mqtt.publish("wled/158690", "ON");
-    mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7C03F");
     obsConnection();
   });
 
