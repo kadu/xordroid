@@ -2,13 +2,13 @@ const bent      = require('bent');
 const getJSON   = bent('json');
 const jsdom     = require("jsdom");
 const { JSDOM } = jsdom;
+const axios     = require('axios');
+const logs      = require('./commons/log');
 
-const axios = require('axios');
-
-const jokeAPIURL = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
-const piadaAPIURL = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
-const piadasURL = "https://www.osvigaristas.com.br";
-const piadasURI = "/charadas/pagina#.html";
+const jokeAPIURL      = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
+const piadaAPIURL     = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
+const piadasURL       = "https://www.osvigaristas.com.br";
+const piadasURI       = "/charadas/pagina#.html";
 const cartoonAudioURL = "https://actions.google.com/sounds/v1/cartoon/";
 const cartoonAudios = [
   "slide_whistle_to_drum.ogg",
@@ -51,6 +51,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
         let response;
         switch (message) {
             case '!joke':
+              logs.logs('Piadas TTS', message, context.username);
               response = await getJSON(jokeAPIURL);
               if(response.type === "single")
                 msgpiada = response.joke;
@@ -67,15 +68,12 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
               break;
 
             case '!piada':
+              logs.logs('Piadas TTS', message, context.username);
               // response = await getJSON(piadaAPIURL);
               piada = await getPiada();
               piada = piada.replace("?", "?<break time='1400ms'/>");
               msgpiada = `<speak>${piada}<audio src="${getFunAudio()}"/></speak>`;
               ttsQueue.push( {'msg': msgpiada, 'lang': 'pt-BR', 'inputType': 'ssml'});
-              break;
-
-            case '!piadateste':
-              getPiada();
               break;
             default:
                 break;

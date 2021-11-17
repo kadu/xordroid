@@ -1,10 +1,11 @@
-const dotenv = require('dotenv');
-const bent = require('bent');
+const dotenv  = require('dotenv');
+const logs    = require('./commons/log');
+const bent    = require('bent');
 const getJSON = bent('json');
 const sqlite3 = require('sqlite3').verbose();
-const sqlite = require('sqlite');
-const WURL = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lang=pt_br&q=';
-var db = null;
+const sqlite  = require('sqlite');
+const WURL    = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lang=pt_br&q=';
+var db        = null;
 
 function sendSSEMessage(send) {
   send(
@@ -51,9 +52,10 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
         switch (parsedMessage[0]) {
             case '!tempo':
             case '!weather':
-                let fullMessage = message.replace("!weather","").replace("!tempo","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-                let cidade = fullMessage;
-                if(cidade == "") {
+              let fullMessage = message.replace("!weather","").replace("!tempo","").normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+              let cidade = fullMessage;
+              if(cidade == "") {
+                  logs.logs('Weather', 'Faltou informar a cidade', context.username);
                   client.say(target, `@${context.username} você deve usar o !tempo seguido da sua cidade, exemplo para a cidade de São Paulo: !tempo são paulo`);
                   return;
                 }
@@ -87,12 +89,14 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                       message,
                   );
                   messages.push(`${city}(${country}) - ${temp}oC`);
+                  logs.logs('Weather', `${city}(${country}) - ${temp}ºC`, context.username);
 
                   sendSSEMessage(send);
 
                 } catch (error) {
-                  client.say(target, 'Não consegui achar sua cidade :/');
-                  console.log(error);
+                  client.say(target, 'Não consegui achar sua cidade, Coloque apenas o nome da cidade, ou nome da cidade virgula pais.(exemplo: dublin, IE)');
+                  logs.logs('Weather', `Cidade não encontrada ${cidade}`, context.username);
+                  // console.log(error);
                 }
                 break;
             default:

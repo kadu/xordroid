@@ -1,23 +1,24 @@
 const { readdirSync } = require('fs');
-const dotenv = require('dotenv');
 const OBSWebSocket = require('obs-websocket-js');
-const obs = new OBSWebSocket();
-const tmi = require('tmi.js');
-const MQTT = require("mqtt");
-const { Console } = require('console');
-const sound = require("sound-play");
 const textToSpeech = require('@google-cloud/text-to-speech');
-const fs = require('fs');
-const util = require('util');
-const chalk = require('chalk');
-const express = require('express');
-var favicon = require('serve-favicon');
-const app = express();
+const { Console }  = require('console');
+const sound     = require("play-sound")(opts = {});
+const dotenv    = require('dotenv');
+const obs       = new OBSWebSocket();
+const tmi       = require('tmi.js');
+const MQTT      = require("mqtt");
+const fs        = require('fs');
+const util      = require('util');
+const chalk     = require('chalk');
+const express   = require('express');
+var favicon     = require('serve-favicon');
+const app       = express();
 const dbweather = require("./commands/weather");
-const sse = require('easy-server-sent-events');
-const Discord = require('discord.js');
-const cDiscord = new Discord.Client();
-var cors = require('cors');
+const sse       = require('easy-server-sent-events');
+const Discord   = require('discord.js');
+const cDiscord  = new Discord.Client();
+var cors        = require('cors');
+const { logs } = require('./commands/commons/log');
 
 const clienttts = new textToSpeech.TextToSpeechClient();
 async function playTTS(message) {
@@ -35,11 +36,8 @@ async function playTTS(message) {
   const writeFile = util.promisify(fs.writeFile);
   const ttsTempFile = `${__dirname}\\temp\\output.m4a`;
   await writeFile(ttsTempFile, response.audioContent, 'binary');
-  sound.play(ttsTempFile).then((response) => {
+  sound.play(ttsTempFile, (fim) => {
     isPlayingTTS = false;
-  }).catch((error) => {
-    isPlayingTTS = false;
-    console.error(error);
   });
 }
 
@@ -53,6 +51,8 @@ const MQTT_CLIENT = process.env.MQTT_CLIENT;
 const MQTT_USER = process.env.MQTT_USER;
 const MQTT_PW = process.env.MQTT_PW;
 const DISCORD_KEY = process.env.DISCORD_KEY;
+const GOOGLE_KEY = process.env.GOOGLE_KEY;
+process.env.GOOGLE_APPLICATION_CREDENTIALS = GOOGLE_KEY
 
 const mqtt_options = {
 	host: MQTT_HOST,
@@ -75,12 +75,6 @@ mqtt.on('connect', function () {
     if (!err) {
 			mqtt.publish('xordroid/weather/keepAlive', 'Hello mqtt');
 			console.log("MQTT Ready!");
-			// mqtt.publish("wled/158690/api", "FX=80&SN=1");
-			// mqtt.publish("wled/158690/col", "#7FFF00");
-      // mqtt.publish("wled/158690", "ON");
-      // mqtt.publish("homie/ledmatrix/matrix/on/set","true");
-      // mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7C03F");
-      // mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7609F");
 
     }
   });
@@ -143,41 +137,18 @@ client.on("join", (channel, username, self) => {
 client.connect();
 
 obs.on("StreamStarted", (data) => {
-  console.log(chalk.blueBright("Stream is ON LINE"));
+  console.log(chalk.bgWhiteBright.inverse("Stream is ON LINE"));
   isStreamON = true;
 });
 
 obs.on("StreamStopped", (data) => {
-  console.log(chalk.blueBright("Stream is OFFLINE"));
+  console.log(chalk.bgWhiteBright.inverse("Stream is OFFLINE"));
   isStreamON = false;
 });
 
 setInterval(() => {
   if(isStreamON) {
-    client.commercial("kaduzius",60).then((data) => {
-      console.log(chalk.redBright("***** COMERCIAL ****"));
-      console.log(data);
-
-
-      sound.play(`${__dirname}\\audio\\alarme\\a01.mp3`).then((response) => {
-        isPlayingTTS = false;
-      }).catch((error) => {
-        isPlayingTTS = false;
-        console.error(error);
-      });
-
-
-    })
-    .catch((err) => {
-      console.log("*****ERRO COMERCIAL ****");
-      console.log(err);
-    });
-  }
-}, 3600000);
-
-setInterval(() => {
-  if(isStreamON) {
-    client.say("#kaduzius", '!prime');
+    client.say("#kaduzius", 'Tem Amazon Prime e ainda não vinculou sua conta ? Faça isso, aproveite e escorrega o Prime aqui e apoie o canal -> 1. Acesse https://gaming.amazon.com |-| 2. Faca login na sua conta da amazon.com.br |-| 3. Selecione vincular conta da Twitch |-| 4. Faca login na sua conta da Twitch e selecione Confirmar. |-| 5. Volte aqui no canal do Kaduzius, clique em Inscrever-se! - E já fica aqui o meu muito obrigado!!');
   }
 }, 72*60000);
 
@@ -188,13 +159,14 @@ const options = {
 const {SSE, send, openSessions, openConnections} = sse(options);
 
 
+
 readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
   .forEach((file) => {
-		require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
+    logs("BOOTLOADER",`Loading module ${file}`, '')
+    require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
   });
-
-
+  logs("BOOTLOADER",`Finished`, '');
 
 app.use(cors());
 app.use(SSE);

@@ -1,5 +1,5 @@
 const changeScenes = require("./changeScenes");
-const sound = require("sound-play");
+const sound = require("play-sound")(opts = {});
 
 function randomInt(min, max) {
 	return min + Math.floor((max - min) * Math.random());
@@ -14,7 +14,7 @@ exports.default = (client, obs, mqtt, messages) => {
 
   async function eventsMessage(effect, chat_message, led_message, timeoutTimer=20000) {
     thing.currentScene = await changeScenes.getCurrentScene(obs);
-    console.log(`Aqui é ${thing.currentScene}`);
+    // console.log(`Aqui é ${thing.currentScene}`);
     client.say(thing.client.channels[0], chat_message);
     mqtt.publish("wled/158690", "ON");
     if(effect == 100) {
@@ -36,7 +36,7 @@ exports.default = (client, obs, mqtt, messages) => {
       `Ae @${username}, valeu muitão pelo SUB, o coração até para!!! Tks`,
       `a Live agradece @${username}`,
       20000);
-      sound.play(`${__dirname}\\audio\\coracao\\coracao01.wav`).then((response) => {
+      sound.play(`${__dirname}/audio/coracao/coracao01.wav`).then((response) => {
       }).catch((error) => {
         console.error(error);
       });
@@ -48,7 +48,7 @@ exports.default = (client, obs, mqtt, messages) => {
       `Recebendo uma super raid do pessoal da live @${username}, valeu pela raid e sejam todos bem vindos!) `,
       `Oia a raid, valeu @${username} \\p/`,
       19000);
-      sound.play(`${__dirname}\\audio\\raid\\welcome2.mp3`).then((response) => {
+      sound.play(`${__dirname}/audio/raid/welcome2.mp3`).then((response) => {
       }).catch((error) => {
         console.error(error);
       });

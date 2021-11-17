@@ -1,6 +1,8 @@
-const dotenv = require('dotenv');
-const { get } = require('request-promise');
+const dotenv    = require('dotenv');
+const { get }   = require('request-promise');
 const translate = require('translate');
+const logs      = require('./commons/log');
+
 dotenv.config();
 translate.engine = process.env.TRANSLATE_ENGINE;
 translate.key = process.env.GOOGLE_KEY;
@@ -23,6 +25,7 @@ exports.default = (client, obs, mqtt, messages) => {
                     target,
                     `Faça: ${translated} (${response.activity})`,
                 );
+                logs.logs('Cansado', `Faça: ${translated} (${response.activity})`, context.username);
                 break;
             default:
                 break;

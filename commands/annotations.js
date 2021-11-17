@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const sqlite = require('sqlite');
+const logs = require('./commons/log');
 var db = null;
 
 /*
@@ -41,6 +42,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send, cD
 
           const channel = cDiscord.channels.cache.find(channel => channel.name === "anotações");
           channel.send(`Enviada por @${context.username} : ${fullMessage}`);
+          logs.logs('Annotations', fullMessage, context.username);
         }
     });
 };
