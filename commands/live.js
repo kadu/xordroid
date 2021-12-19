@@ -16,7 +16,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
               mqtt.publish("xordroid/weather/on", "");
               mqtt.publish("wled/158690", "ON");
               mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7C03F");
-              mqtt.publish("wled/158690/api", "FX=80&SN=1");
+              mqtt.publish("wled/158690/api", "FX=80");
               mqtt.publish("wled/158690/col", "#7FFF00");
               mqtt.publish("wled/158690", "ON");
               mqtt.publish("homie/ledmatrix/matrix/on/set","true");

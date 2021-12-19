@@ -137,12 +137,12 @@ client.on("join", (channel, username, self) => {
 client.connect();
 
 obs.on("StreamStarted", (data) => {
-  console.log(chalk.bgWhiteBright.inverse("Stream is ON LINE"));
+  console.log(chalk.bgRedBright.inverse("Stream is ON LINE"));
   isStreamON = true;
 });
 
 obs.on("StreamStopped", (data) => {
-  console.log(chalk.bgWhiteBright.inverse("Stream is OFFLINE"));
+  console.log(chalk.bgRedBright.inverse("Stream is OFFLINE"));
   isStreamON = false;
 });
 
