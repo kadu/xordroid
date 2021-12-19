@@ -20,18 +20,17 @@ exports.default = (client, obs, mqtt, messages) => {
         if(message.substring(0,23) == "Thank you for following") {
           client.say(client.channels[0], `Valeu @${sendedBy} pelo follow, vou até soltar uns rojões!`);
           mqtt.publish("wled/158690", "ON");
-          mqtt.publish("wled/158690/api", "FX=90&SN=1");
+          mqtt.publish("wled/158690/api", "FX=90");
           messages.push(`Valeu ae @${sendedBy}`);
-          sound.play(`${__dirname}/audio/rojoes/firework0${randomInt(1,4)}.wav`).then((response) => {
-          }).catch((error) => {
-            console.error(error);
+          sound.play(`${__dirname}/audio/rojoes/firework0${randomInt(1,4)}.wav`, function(err){
+            if (err) throw err
           });
           thing.currentScene = await changeScenes.getCurrentScene(obs);
           console.log(thing.currentScene);
           changeScenes.change(client, obs, mqtt, "webcam");
           try {
             setTimeout(()=> {
-              mqtt.publish("wled/158690/api", "FX=91&SN=1");
+              mqtt.publish("wled/158690/api", "FX=91");
               console.log("DENTRO thing.currentScene = ", thing.currentScene);
               changeScenes.change(thing.client, thing.obs, thing.mqtt, thing.currentScene);
             },16000);

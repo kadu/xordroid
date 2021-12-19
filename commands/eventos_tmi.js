@@ -20,12 +20,12 @@ exports.default = (client, obs, mqtt, messages) => {
     if(effect == 100) {
       mqtt.publish("wled/158690/col", "#FF0000");
     }
-    mqtt.publish("wled/158690/api", `FX=${effect}&SN=1`);
+    mqtt.publish("wled/158690/api", `FX=${effect}`);
     messages.push(led_message);
     changeScenes.change(thing.client, thing.obs, thing.mqtt, "webcam");
     setTimeout(()=> {
       mqtt.publish("wled/158690/col", "#FFFF00");
-      mqtt.publish("wled/158690/api", `FX=80&SN=1`);
+      mqtt.publish("wled/158690/api", `FX=80`);
       mqtt.publish("wled/158690", "ON");
       changeScenes.change(thing.client, thing.obs, thing.mqtt, thing.currentScene);
     },timeoutTimer);

@@ -46,10 +46,6 @@ exports.default = (client, target, context, messages) => {
         client.say(target,`Esse negocio de ficar arrepiando o diabo só acontece la na live do @daviprm_, ja aproveita e da um cola lá, um followzinho ;)`);
         logs.logs('Eastereggs', parsedMessage[0], context.username);
         break;
-      case '!hub':
-        client.say(target,`Conheça a HUB, A porta de conexão com comunidade! -> http://ahub.tech/discord`);
-        logs.logs('Eastereggs', parsedMessage[0], context.username);
-        break;
       case '!issue':
       case '!ideia':
       case '!issues':

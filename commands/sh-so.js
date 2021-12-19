@@ -39,7 +39,7 @@ exports.default = (client, obs, mqtt, messages) => {
         } catch (error) {
           const streamer = parsedMessage[1].toLowerCase().replace('@','');
           logs.logs('SH SO', ` Não consegui adicionar `+ chalk.redBright.bold(`${streamer}`) + ` \n\t Motivo: ${error}`, context.username);
-          client.say(client.channels[0], `já estava anotado ;)`);
+          client.say(client.channels[0], `${streamer}, já estava na listinha ;)`);
         }
         break;
       default:
