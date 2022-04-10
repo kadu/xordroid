@@ -11,6 +11,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
       if(typeof parsedMessage[1] == 'undefined') return;
       if(parsedMessage[0] !== "!live") return;
 
+      try {
         switch (parsedMessage[1].toLowerCase()) {
             case 'liga':
               mqtt.publish("xordroid/weather/on", "");
@@ -31,6 +32,9 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             default:
                 break;
         }
+      } catch (error) {
+        console.log(error);
+      }
     });
 };
 
