@@ -1,14 +1,52 @@
 // const chalk  = require('chalk');
 const logs = require('./commons/log');
+const sound = require("play-sound")(opts = {});
 let jogadas = [];
 let numerosJogados = [];
 let tabuleiro = [1,2,3,4,5,6,7,8,9];
 let simboloJogado = true; // true == X | false == O
 
+function tocaSom(quando) {
+  let som = '';
+  switch (quando) {
+    case 'vitoria':
+      break;
+    case 'empate':
+        break;
+    default:
+      break;
+  }
+
+  sound.play(`${__dirname}/audio/rojoes/firework0${randomInt(1,4)}.wav`, function(err){
+    if (err) throw err
+  });
+}
+
 function debugs() {
   console.log('jogadas', jogadas);
   console.log('numerosJogados', numerosJogados);
   console.log('tabuleiro', tabuleiro);
+}
+
+function empate(mqtt) {
+  setTimeout(() => {
+    mqtt.publish("velha/comandos", '3');
+  }, 1000);
+  setTimeout(() => {
+    resetaVelha(mqtt); //resetar variaveis
+  }, 5000);
+}
+
+function ganhou(mqtt, simbolo, linha) {
+  mqtt.publish("velha/linha", linha);
+  setTimeout(() => {
+    mqtt.publish("velha/comandos", simbolo? '4':'5');
+  }, 1500);
+  // tocaSom('vitoria');
+
+  setTimeout(() => {
+    resetaVelha(mqtt); //resetar variaveis
+  }, 6000);
 }
 
 function resetaVelha(mqtt) {
@@ -83,34 +121,41 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
         jogadas.push(context.username);
         numerosJogados.push(numero);
 
-        debugs();
-
         // verifica se deu VELHA!
-        alguemGanhou = ((tabuleiro[0] === tabuleiro[1] && tabuleiro[1] == tabuleiro[2]) ||
-          (tabuleiro[3] === tabuleiro[4] && tabuleiro[4] == tabuleiro[5]) ||
-          (tabuleiro[6] === tabuleiro[7] && tabuleiro[7] == tabuleiro[8]) ||
-          (tabuleiro[0] === tabuleiro[3] && tabuleiro[3] == tabuleiro[6]) ||
-          (tabuleiro[1] === tabuleiro[4] && tabuleiro[4] == tabuleiro[7]) ||
-          (tabuleiro[2] === tabuleiro[5] && tabuleiro[5] == tabuleiro[8]) ||
-          (tabuleiro[0] === tabuleiro[4] && tabuleiro[4] == tabuleiro[8]) ||
-          (tabuleiro[2] === tabuleiro[4] && tabuleiro[4] == tabuleiro[6]))
+         let alguemGanhou = 0;
+        if((tabuleiro[0] === tabuleiro[1] && tabuleiro[1] == tabuleiro[2])) {
+          alguemGanhou = 123;
+        } else if (tabuleiro[3] === tabuleiro[4] && tabuleiro[4] == tabuleiro[5]) {
+          alguemGanhou = 456;
+        } else if (tabuleiro[6] === tabuleiro[7] && tabuleiro[7] == tabuleiro[8]) {
+          alguemGanhou = 789;
+        } else if (tabuleiro[0] === tabuleiro[3] && tabuleiro[3] == tabuleiro[6]) {
+          alguemGanhou = 147;
+        } else if (tabuleiro[1] === tabuleiro[4] && tabuleiro[4] == tabuleiro[7]) {
+          alguemGanhou = 258;
+        } else if (tabuleiro[2] === tabuleiro[5] && tabuleiro[5] == tabuleiro[8]) {
+          alguemGanhou = 369;
+        } else if (tabuleiro[0] === tabuleiro[4] && tabuleiro[4] == tabuleiro[8]) {
+          alguemGanhou = 159;
+        } else if (tabuleiro[2] === tabuleiro[4] && tabuleiro[4] == tabuleiro[6]) {
+          alguemGanhou = 357;
+        }
 
-        if(alguemGanhou) {
+        if(alguemGanhou !== 0) {
           client.say (
             target,
-            `Parabéns galera do ${simboloJogado? 'O' : 'X'}, vocês ganharam`
+            `É, não é que o ${simboloJogado? 'Raspberry PI' : 'Arduino'} é melhor mesmo!`
           );
-          setTimeout(() => {
-            resetaVelha(mqtt); //resetar variaveis
-          }, 4000);
+            ganhou(mqtt, simboloJogado, alguemGanhou.toString());
         } else if (numerosJogados.length === 9) { // Verifica empate
           client.say (
             target,
             `Não acho que quem ganhar ou quem perder, nem quem ganhar nem perder, vai ganhar ou perder. Vai todo mundo perder. :D`
           );
+
           setTimeout(() => {
-            resetaVelha(mqtt); //resetar variaveis
-          }, 4000);
+            empate(mqtt); //envia comando do empate
+          }, 500);
         }
     });
 };

@@ -23,11 +23,13 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
               mqtt.publish("homie/ledmatrix/matrix/on/set","true");
               mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7C03F");
               mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF7609F");
+              mqtt.publish("velha/comandos", "2");
               break;
             case 'desliga':
               mqtt.publish("wled/158690", "OFF");
               mqtt.publish("homie/ircontrole/InfraRed/code/set", "0xF740BF");
               mqtt.publish("homie/ledmatrix/matrix/on/set","false");
+              mqtt.publish("velha/comandos", "1");
               break;
             default:
                 break;
