@@ -6,6 +6,7 @@ const CP_LuzCenario = 'e830937d-05c7-4fa0-911a-fcb4f5ed272f';
 exports.default = async (client, obs, mqtt, messages) => {
   client.on("raw_message", async (messageCloned, message) => {
     if(message.tags && message.tags['custom-reward-id']) {
+      logs.logs('Custom TAG', message.tags['custom-reward-id'], message.tags['display-name']);
       if(message.tags['custom-reward-id'] === CP_LuzCenario) {
         let sendcolor = await parseColor.parseColor(message.params[1]);
         if(sendcolor !== -1) {

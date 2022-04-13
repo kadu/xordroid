@@ -11,15 +11,17 @@ const dicionario      = "https://www.palabrasaleatorias.com";
 const dicionarioURI   = "/palavras-aleatorias.php?fs=1&fs2=0&Submit=Nova+palavra";
 const dicPalavra      = "https://api.dicionario-aberto.net/word/#/1";
 const CP_Forca        = '72cbe921-36bc-4134-9f50-c488a21587c0';
+const CP_5Vidas       =  'cdac53f8-937f-44c3-9d0c-43ef8e25506f'
 const dotenv          = require('dotenv');
 let gameID            = 0;
 let hangword          = "";
 let displayText       = "";
 let hangmanTip        = "";
-let isGameFinished    = true;
+let letrasErradas     = [];
+let isGameFinished    = false;
 let gameStartTime;
 let sql;
-let gameTimer;
+
 const [TWITCH_CHANNEL_NAME] = process.env.CHANNEL_NAME.split(',');
 
 function matrixFixMessage(mqtt, message, updateStete = true) {
@@ -29,18 +31,29 @@ function matrixFixMessage(mqtt, message, updateStete = true) {
   mqtt.publish("homie/ledmatrix/message/fixmessage/set", message);
 }
 
-async function finalizarForca(id, client) {
-  const result = await db.get("SELECT * FROM hangman_games hg2 WHERE hg2.id = ?", [id], (err, row) => {
+async function mostraVidas(username, client) {
+  const result = await db.get(`SELECT SUM(lives) as vidas FROM hangman_lives WHERE twitch_account  = '${username.toLowerCase()}'`, [], (err, row) => {
     if(err) {
       return console.log(err);
     }
   });
 
+  let totalVidas;
+
   if(typeof result != 'undefined') {
-    endGame(id);
-    client.say(TWITCH_CHANNEL_NAME, `O jogo finalizou e infelizmente o Chat Perdeu :( - A palavra era ${hangword}`);
+    totalVidas = result.vidas;
   }
+
+  client.say(TWITCH_CHANNEL_NAME, `@${username} você tem ${totalVidas} vidas no seu inventário`);
 }
+
+
+async function resgataVidas(userid, vidas, client) {
+  let dbreturn = await db.run(`INSERT INTO hangman_lives (twitch_account, lives) values ('${userid.toLowerCase()}', ${vidas})`);
+  mostraVidas(userid, client);
+}
+
+
 
 function map( x,  in_min,  in_max,  out_min,  out_max){
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -63,20 +76,14 @@ async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue,
     });
 
     if(typeof result != 'undefined') {
-      client.say(TWITCH_CHANNEL_NAME, "O jogo está iniciado, digita !participar para entrar no jogo! (Chat, vocês tem 1 minuto pra entrar)");
+      // client.say(TWITCH_CHANNEL_NAME, "O jogo está iniciado, digita !participar para entrar no jogo! (Chat, vocês tem 1 minuto pra entrar)");
 
-      setTimeout(() => {
-        client.say(TWITCH_CHANNEL_NAME,"Que começem os jogos! - Exemplo: !letra a");
-        logs.logs('Hangman', 'Jogo iniciado', '');
-      }, 60000);
+      client.say(TWITCH_CHANNEL_NAME,"Jogo iniciado, para jogar tente o comando: !letra a");
+      logs.logs('Hangman', 'Jogo iniciado', '');
+      letrasErradas = [];
 
       gameID = result.id;
       gameStartTime = new Date();
-
-      gameTimer = setTimeout(() => {
-        finalizarForca(gameID, client);
-      }, 5*60000);
-
     }
 
     hangword = await getWord();
@@ -93,7 +100,7 @@ async function inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue,
     matrixFixMessage(mqtt, displayText);
   }
   else {
-    client.say(TWITCH_CHANNEL_NAME,"Existe um jogo aberto, manda um !participar e jogue você tambem");
+    client.say(TWITCH_CHANNEL_NAME,"Existe um jogo aberto, só mandar uma letra com o comando: !letra a");
   }
   logs.logs('Hangman', 'inicia_forca()', '');
 }
@@ -126,7 +133,6 @@ async function endGame(gameID) {
   console.log(gameID);
   sql = "UPDATE hangman_games SET winner = 'OK' where id = ?";
   let retorno = await db.run(sql,[gameID]);
-  clearTimeout(gameTimer);
   console.log(retorno);
   logs.logs('Hangman', 'Fim de jogo', '');
 }
@@ -136,6 +142,7 @@ async function createDB() {
     db = await sqlite.open({ filename: './databases/xordroid.db', driver: sqlite3.Database });
     await db.run(`CREATE TABLE IF NOT EXISTS hangman_games (id INTEGER PRIMARY KEY AUTOINCREMENT, start_date DATETIME DEFAULT CURRENT_TIMESTAMP, finish_date DATETIME, winner TEXT)`);
     await db.run(`CREATE TABLE IF NOT EXISTS hangman_players ( id INTEGER PRIMARY KEY AUTOINCREMENT, hangman_gameid INTEGER, twitch_account TEXT, lives DEFAULT 5)`);
+    await db.run(`CREATE TABLE IF NOT EXISTS hangman_lives ( id INTEGER PRIMARY KEY AUTOINCREMENT, twitch_account TEXT, lives DEFAULT 0)`);
   } catch (error) {
     console.error(error);
   }
@@ -199,63 +206,38 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
         case '!letra':
           logs.logs('Hangman', parsedMessage[0], context.username);
           if(isGameFinished) {
-            client.say(target, `Poxa, a palavra já foi descoberta`);
+            client.say(target, `Poxa, a palavra já foi descoberta, começe um novo jogo com o comando !forca`);
             return;
           }
 
-
-          sql = "select sum(lives) as totallives from hangman_players hp where hp.hangman_gameid  = ?"
-          const result0 = await db.get(sql, [gameID], (err, row) => {
+          sql = "select sum(lives) as totallives from hangman_lives where twitch_account = ?"
+          const result0 = await db.get(sql, [context.username], (err, row) => {
             if(err) {
               return console.log(err);
             }
           });
 
           if(typeof result0 != 'undefined') {
-            if((result0.totallives) === 0) {
-              client.say(target, "Oxi, Só tem zumbi por aqui! Se quiser, comece outro jogo mandando !forca");
-              endGame(gameID);
+            if((result0.totallives) <= 0) {
+              client.say(target, `Suas vidas acabaram ${context.username}, compre mais vidas para continuar jogando!`);
+              // endGame(gameID);
               return;
             }
           }
-
-
-          // get users lives
-          sql = "SELECT lives from hangman_players where hangman_gameid = ? AND twitch_account = ?";
-          const result = await db.get(sql, [gameID, context.username], (err, row) => {
-            if(err) {
-              return console.log(err);
-            }
-          });
-
-          if(typeof result != 'undefined') {
-            let pastTime = getMinutesBetweenDates(gameStartTime, new Date());
-            let secs = Math.ceil(map(pastTime, 0,1,60,0));
-            if(pastTime < 1) {
-              client.say(target, `Ainda faltam ${secs} segundos pro jogo começar!`);
-              return;
-            }
-
-            console.log(`@${context.username} vidas ${result.lives}  gameID ${gameID}`);
-            if(result.lives === 0) {
-              client.say(target,`@${context.username}, morto não fala, nunca mais! :P`);
-              return;
-            }
-          } else {
-            client.say(target,`@${context.username}, para participar você precisa digitar !participar`);
-            return;
-          }
-
 
           wordToSearch = String(parsedMessage[1]).toLowerCase();
           if(hangword.indexOf(wordToSearch) == -1) {
             // tira ponto
-            sql = "UPDATE hangman_players SET lives = lives - 1 where hangman_gameid = ? AND twitch_account = ?";
-            await db.run(sql,[gameID, context.username]);
-            if(result.lives-1 == 0 ) {
+            sql = "INSERT INTO hangman_lives (twitch_account, lives) values (? , -1)";
+            await db.run(sql,[context.username]);
+            if(result0.totallives-1 <= 0 ) {
               client.say(target,`@${context.username}, você morreu!`);
+              return;
             } else {
-              client.say(target,`@${context.username}, errou e agora só resta ${result.lives-1} vidas`);
+              if(!letrasErradas.includes(wordToSearch)) {
+                letrasErradas.push(wordToSearch);
+              }
+              client.say(target,`@${context.username}, errou e agora só resta ${result0.totallives-1} vidas`);
             }
 
           } else {
@@ -285,22 +267,6 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             }
           }
           break;
-        case '!participar':
-          if(gameID === 0) return
-          logs.logs('Hangman', parsedMessage[0], context.username);
-
-          let pastTime = getMinutesBetweenDates(gameStartTime, new Date());
-          if(pastTime > 1) {
-            client.say(target, `@${context.username} o jogo já começou, vai ter que ficar para o próximo :/`);
-            return;
-          }
-
-          sql = `INSERT INTO hangman_players (hangman_gameid, twitch_account) values (${gameID},"${context.username}")`;
-          await db.run(sql);
-          // calcular tempo para por nos segundos
-          let secs = Math.ceil(map(pastTime, 0,1,60,0));
-          client.say(target, `@${context.username} você está participando do jogo, que vai começar daqui ${secs} segundos.`);
-          break;
         case '!hangman':
         case '!forca':
           logs.logs('Hangman', parsedMessage[0], context.username);
@@ -311,6 +277,18 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
           client.say(target, `Jogo finalizado a força pelo @kaduzius`);
           messages.push('Jogo finalizado a forca');
           endGame(gameID);
+          break;
+        case '!vida':
+        case '!vidas':
+          mostraVidas(context.username, client);
+          break;
+        case '!erro':
+        case '!erros':
+          let resultado = '';
+          letrasErradas.forEach((val) => {
+            resultado = `${resultado}${val} `;
+          });
+          client.say(TWITCH_CHANNEL_NAME, `Letras já erradas: ${resultado}`);
           break;
         default:
             break;
@@ -328,6 +306,16 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
   client.on("raw_message", async (messageCloned, message) => {
     if(message.tags['custom-reward-id'] === CP_Forca) {
       inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
+    }
+    switch (message.tags['custom-reward-id']) {
+      case CP_Forca:
+        inicia_forca(client, obs, mqtt, messages, commandQueue, ttsQueue, send);
+        break;
+      case CP_5Vidas:
+        resgataVidas(message.tags['display-name'], 5, client);
+        break;
+      default:
+        break;
     }
   });
 };

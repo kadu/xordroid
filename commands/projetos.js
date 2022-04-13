@@ -71,6 +71,11 @@ exports.default = (client, obs, mqtt, messages) => {
                 logs.logs('Projetos', message, context.username);
                 client.say(target,`Como deixar sua maquina de lavar inteligente -> https://github.com/kadu/smartwashmachine`);
                 break;
+              case '!babaeletronica':
+              case '!baba':
+                logs.logs('Projetos', message, context.username);
+                client.say(target,`Uma babá eletrônica com ESP32Cam -> https://www.kaduzi.us/baba-eletronica-com-esp32cam/`);
+                break;
               case '!pomodoro':
                 logs.logs('Projetos', message, context.username);
                 client.say(target,`Que tal usar leds para contar seus pomodoros -> https://github.com/kadu/ledRingPomodoroTimer`);
