@@ -6,18 +6,31 @@ let numerosJogados = [];
 let tabuleiro = [1,2,3,4,5,6,7,8,9];
 let simboloJogado = true; // true == X | false == O
 
+const sound_vitoria = 'vitoria';
+const sound_emapate = 'empate';
+const sound_start   = 'start';
+const sound_jogada  = 'jogada';
+
 function tocaSom(quando) {
   let som = '';
   switch (quando) {
     case 'vitoria':
+      som = `${__dirname}/audio/velha/vitoria.mp3`;
       break;
     case 'empate':
+        som = `${__dirname}/audio/velha/e-voce-satanas.mp3`;
         break;
+    case 'start':
+      som = `${__dirname}/audio/velha/pacman_beginning.wav`;
+      break;
+    case 'jogada':
+      som = `${__dirname}/audio/velha/pingo_velha.mp3`;
+      break;
     default:
       break;
   }
 
-  sound.play(`${__dirname}/audio/rojoes/firework0${randomInt(1,4)}.wav`, function(err){
+  sound.play(som, function(err){
     if (err) throw err
   });
 }
@@ -121,6 +134,8 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
         jogadas.push(context.username);
         numerosJogados.push(numero);
 
+        tocaSom(numerosJogados.length == 1? sound_start : sound_jogada);
+
         // verifica se deu VELHA!
          let alguemGanhou = 0;
         if((tabuleiro[0] === tabuleiro[1] && tabuleiro[1] == tabuleiro[2])) {
@@ -147,6 +162,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
             `É, não é que o ${simboloJogado? 'Raspberry PI' : 'Arduino'} é melhor mesmo!`
           );
             ganhou(mqtt, simboloJogado, alguemGanhou.toString());
+            tocaSom(sound_vitoria);
         } else if (numerosJogados.length === 9) { // Verifica empate
           client.say (
             target,
@@ -155,6 +171,7 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
 
           setTimeout(() => {
             empate(mqtt); //envia comando do empate
+            tocaSom(sound_emapate);
           }, 500);
         }
     });
