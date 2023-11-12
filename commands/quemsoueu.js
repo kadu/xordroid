@@ -37,8 +37,11 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
                 client.say(target, 'Foi mal, nao achei esse nome');
                 paises = `(não vem, sem nacionalidade)`;
               } else {
-                let [response2]   = await getJSON(`${paisInfoURL}${response.country[0].country_id}`);
-                paises = `${response2.translations.br} (${response.country[0].probability.toFixed(2)*100}%)`
+                try {
+                  let [response2]   = await getJSON(`${paisInfoURL}${response.country[0].country_id}`);
+                  paises = `${response2.translations.br} (${response.country[0].probability.toFixed(2)*100}%)`
+                } catch (error) {
+                }
               }
 
               client.say(

@@ -4,11 +4,11 @@ const jsdom     = require("jsdom");
 const { JSDOM } = jsdom;
 const axios     = require('axios');
 const logs      = require('./commons/log');
+const sqlite3   = require('sqlite3').verbose();
+const sqlite    = require('sqlite');
+var db          = null;
 
 const jokeAPIURL      = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
-const piadaAPIURL     = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
-const piadasURL       = "https://www.osvigaristas.com.br";
-const piadasURI       = "/charadas/pagina#.html";
 const cartoonAudioURL = "https://actions.google.com/sounds/v1/cartoon/";
 const cartoonAudios = [
   "slide_whistle_to_drum.ogg",
@@ -18,6 +18,17 @@ const cartoonAudios = [
   "concussive_hit_guitar_boing.ogg",
   "cartoon_boing.ogg",
 ];
+
+async function createDB() {
+  try {
+    db = await sqlite.open({ filename: './databases/xordroid.db', driver: sqlite3.Database });
+    await db.run(`CREATE TABLE IF NOT EXISTS piadas ( id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, username TEXT, piada TEXT, ativa INTEGER DEFAULT 0 )`);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+createDB();
 
 function randomInt(min, max) {
 	return min + Math.floor((max - min) * Math.random());
@@ -29,17 +40,20 @@ function getFunAudio() {
 }
 
 async function getPiada() {
-  let url = piadasURL+piadasURI;
-  url = url.replace("#",randomInt(1,33));
+  let retorno = '';
+  const sql = 'select DISTINCT piada from piadas where piadas.ativa = 1 order by RANDOM() limit 1';
+  const params = [];
+    const result = await db.all(sql, params, (err, row) => {
+      if (err) {
+        throw err;
+      }
+    });
 
-  try {
-    const response = await axios.get(url);
-    const dom = new JSDOM(response.data);
-    value = dom.window.document.querySelector(`#main > article:nth-child(${randomInt(2,30)}) > div > div > div:nth-child(2) > div`).textContent.trim().toLocaleLowerCase();
-    return value;
-  } catch (err) {
-    console.log(err);
-  }
+    if(typeof result != 'undefined') {
+      retorno = result[0].piada;
+    }
+
+    return retorno.replace(/^.*?O que é/, "O que é").replace("R.:","");
   return "";
 }
 
@@ -51,13 +65,13 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
         let response;
         switch (message) {
             case '!joke':
-              logs.logs('Piadas TTS', message, context.username);
               response = await getJSON(jokeAPIURL);
               if(response.type === "single")
                 msgpiada = response.joke;
               else {
                 msgpiada = response.setup + "|" +  response.delivery; //#TODO melhorar essa concatenacao
               }
+              logs.logs('Piadas TTS', message, context.username + " => " + msgpiada);
 
               let audiomsgpiada = `<speak>${msgpiada}<audio src="${getFunAudio()}"/></speak>`;
               audiomsgpiada = audiomsgpiada.replace("|", "<break time='1400ms'/>");
@@ -68,12 +82,14 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue) => {
               break;
 
             case '!piada':
-              logs.logs('Piadas TTS', message, context.username);
               // response = await getJSON(piadaAPIURL);
               piada = await getPiada();
-              piada = piada.replace("?", "?<break time='1400ms'/>");
-              msgpiada = `<speak>${piada}<audio src="${getFunAudio()}"/></speak>`;
-              ttsQueue.push( {'msg': msgpiada, 'lang': 'pt-BR', 'inputType': 'ssml'});
+              logs.logs('Piadas TTS', message, context.username + " => " + piada );
+              if (piada.length > 0) {
+                piada = piada.replace("?", "?<break time='1400ms'/>");
+                msgpiada = `<speak>${piada}<audio src="${getFunAudio()}"/></speak>`;
+                ttsQueue.push( {'msg': msgpiada, 'lang': 'pt-BR', 'inputType': 'ssml'});
+              }
               break;
             default:
                 break;

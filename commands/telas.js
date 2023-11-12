@@ -6,7 +6,7 @@ let windowsIP;
 try {
   const data = fs.readFileSync('/etc/resolv.conf', 'utf8');
   let cortado = data.split(" ");
-  windowsIP = cortado[cortado.length-1]
+  windowsIP = cortado[cortado.length - 1]
 } catch (err) {
   console.error(err)
 }
@@ -17,7 +17,8 @@ exports.default = (client, obs, mqtt, messages) => {
   let OBSFaultMessage = false;
 
   function obsConnection() {
-    obs.connect({ address: `${windowsIP}:4444`})
+
+    obs.connect('ws://192.168.11.160:4455')
       .then(() => {
         obsIsConnected = true;
         console.log("Finalmente, conectado no OBS");
@@ -27,7 +28,7 @@ exports.default = (client, obs, mqtt, messages) => {
         var dt = new Date();
         // console.log('Erro OBS:> ', error);
 
-        if(!OBSFaultMessage) {
+        if (!OBSFaultMessage) {
           console.log("[" + dt.getHours() + ":" + dt.getMinutes() + "] Nao conseguiu conectar no OBS");
           OBSFaultMessage = true;
         }
@@ -47,13 +48,13 @@ exports.default = (client, obs, mqtt, messages) => {
     obsIsConnected = false;
     // mqtt.publish("xordroid/weather/off", "");
     // mqtt.publish("wled/158690", "OFF");
-    setTimeout(obsConnection,60000);
+    setTimeout(obsConnection, 60000);
   });
 
   obs.on("ConnectionOpened", (data) => {
-    if(!obsIsConnected) {
+    if (!obsIsConnected) {
       obsIsConnected = true;
-      obs.send('GetCurrentScene')
+      obs.call('GetCurrentScene')
         .then(data => {
           currentScene = data.name;
           // console.log("Cena atual ", currentScene);
@@ -66,7 +67,7 @@ exports.default = (client, obs, mqtt, messages) => {
 
   client.on('message', (target, context, message, isBot) => {
     if (isBot) return;
-    if(OBSFaultMessage) {
+    if (OBSFaultMessage) {
       logs.logs('Telas', 'Não está conectado ao OBS (websocket)', '');
       return;
     }
@@ -74,27 +75,30 @@ exports.default = (client, obs, mqtt, messages) => {
     switch (message) {
       case '!tela':
       case '!screen':
-        changeScenes.change(client, obs, mqtt,"tela");
+        changeScenes.change(client, obs, mqtt, "tela");
         break;
       case '!cam2':
       case '!proto':
       case '!protoboard':
       case '!breadboard':
-        changeScenes.change(client, obs, mqtt,"proto");
+        changeScenes.change(client, obs, mqtt, "proto");
         break;
       case '!webcam':
-        changeScenes.change(client, obs, mqtt,"webcam");
+        changeScenes.change(client, obs, mqtt, "webcam");
         break;
       case '!soldagem':
       case '!solda':
-        changeScenes.change(client, obs, mqtt,"solda");
+        changeScenes.change(client, obs, mqtt, "solda");
         break;
       case '!3D':
       case '!3d':
-        changeScenes.change(client, obs, mqtt,"3d");
+        changeScenes.change(client, obs, mqtt, "3d");
+        break;
+      case '!obs':
+        changeScenes.getCurrentScene(obs);
         break;
       default:
         break;
     }
-	});
+  });
 };

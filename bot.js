@@ -1,24 +1,30 @@
-const { readdirSync } = require('fs');
-const OBSWebSocket = require('obs-websocket-js');
+const {
+  readdirSync
+} = require('fs');
+const OBSWebSocket = require('obs-websocket-js').default;
 const textToSpeech = require('@google-cloud/text-to-speech');
-const { Console }  = require('console');
-const sound     = require("play-sound")(opts = {});
-const dotenv    = require('dotenv');
-const obs       = new OBSWebSocket();
-const tmi       = require('tmi.js');
-const MQTT      = require("mqtt");
-const fs        = require('fs');
-const util      = require('util');
-const chalk     = require('chalk');
-const express   = require('express');
-var favicon     = require('serve-favicon');
-const app       = express();
+const {
+  Console
+} = require('console');
+const sound = require("play-sound")(opts = {});
+const dotenv = require('dotenv');
+const obs = new OBSWebSocket();
+const tmi = require('tmi.js');
+const MQTT = require("mqtt");
+const fs = require('fs');
+const util = require('util');
+const chalk = require('chalk');
+const express = require('express');
+var favicon = require('serve-favicon');
+const app = express();
 const dbweather = require("./commands/weather");
-const sse       = require('easy-server-sent-events');
-const Discord   = require('discord.js');
-const cDiscord  = new Discord.Client();
-var cors        = require('cors');
-const { logs } = require('./commands/commons/log');
+const sse = require('easy-server-sent-events');
+const Discord = require('discord.js');
+const cDiscord = new Discord.Client();
+var cors = require('cors');
+const {
+  logs
+} = require('./commands/commons/log');
 
 const clienttts = new textToSpeech.TextToSpeechClient();
 async function playTTS(message) {
@@ -27,14 +33,21 @@ async function playTTS(message) {
   const inputType = message.inputType;
 
   const request = {
-    input: {[inputType]: text},
-    voice: {languageCode: message.lang, ssmlGender: 'NEUTRAL'},
-    audioConfig: {audioEncoding: 'LINEAR16'},
+    input: {
+      [inputType]: text
+    },
+    voice: {
+      languageCode: message.lang,
+      ssmlGender: 'FEMALE'
+    },
+    audioConfig: {
+      audioEncoding: 'LINEAR16'
+    },
   };
 
   const [response] = await clienttts.synthesizeSpeech(request);
   const writeFile = util.promisify(fs.writeFile);
-  const ttsTempFile = `${__dirname}\\temp\\output.m4a`;
+  const ttsTempFile = `${__dirname}/temp/output.m4a`;
   await writeFile(ttsTempFile, response.audioContent, 'binary');
   sound.play(ttsTempFile, (fim) => {
     isPlayingTTS = false;
@@ -55,10 +68,10 @@ const GOOGLE_KEY = process.env.GOOGLE_KEY;
 process.env.GOOGLE_APPLICATION_CREDENTIALS = GOOGLE_KEY
 
 const mqtt_options = {
-	host: MQTT_HOST,
-	clientId: MQTT_CLIENT,
-	username: MQTT_USER,
-	password: MQTT_PW
+  host: MQTT_HOST,
+  clientId: MQTT_CLIENT,
+  username: MQTT_USER,
+  password: MQTT_PW
 };
 
 var porta;
@@ -73,33 +86,32 @@ const mqtt = MQTT.connect(mqtt_options);
 mqtt.on('connect', function () {
   mqtt.subscribe('xordroid/weather/keepAlive', function (err) {
     if (!err) {
-			mqtt.publish('xordroid/weather/keepAlive', 'Hello mqtt');
-			console.log("MQTT Ready!");
+      mqtt.publish('xordroid/weather/keepAlive', 'Hello mqtt');
+      console.log("MQTT Ready!");
 
     }
   });
 
-  mqtt.subscribe('homie/ledmatrix/message/state', function (err) {
-  });
+  mqtt.subscribe('homie/ledmatrix/message/state', function (err) {});
 
   mqtt.on('message', function (topic, message) {
-    if(topic.toString() == 'homie/ledmatrix/message/state') {
+    if (topic.toString() == 'homie/ledmatrix/message/state') {
       var isTrueSet = (message == 'Idle');
       timerIsOn = isTrueSet;
     }
   });
 
   setInterval(() => {
-    if(timerIsOn) {
-      if(messages.length > 0) {
-            let message = messages.shift();
-            mqtt.publish("homie/ledmatrix/message/message/set", message);
+    if (timerIsOn) {
+      if (messages.length > 0) {
+        let message = messages.shift();
+        mqtt.publish("homie/ledmatrix/message/message/set", message);
       }
     }
   }, 1500);
 
   setInterval(async () => {
-    if((ttsQueue.length > 0) && (!isPlayingTTS)) {
+    if ((ttsQueue.length > 0) && (!isPlayingTTS)) {
       let tts = ttsQueue.shift();
       await playTTS(tts);
     }
@@ -117,21 +129,21 @@ const client = new tmi.Client({
     debug: false,
     level: 'warn',
   },
-	connection: {
-		reconnect: true,
-		secure: true
-	},
-	identity: {
-		username: TWITCH_BOT_USERNAME,
-		password: TWITCH_OAUTH_TOKEN
-	},
+  connection: {
+    reconnect: true,
+    secure: true
+  },
+  identity: {
+    username: TWITCH_BOT_USERNAME,
+    password: TWITCH_OAUTH_TOKEN
+  },
   channels: TWITCH_CHANNEL_NAME
 });
 
 client.on("join", (channel, username, self) => {
-  if(self) {
+  if (self) {
     client.say(channel, "XORdroid na área, e aqui caiu é penalti!");
-	}
+  }
 });
 
 client.connect();
@@ -147,26 +159,31 @@ obs.on("StreamStopped", (data) => {
 });
 
 setInterval(() => {
-  if(isStreamON) {
+  if (isStreamON) {
     client.say("#kaduzius", 'Tem Amazon Prime e ainda não vinculou sua conta ? Faça isso, aproveite e escorrega o Prime aqui e apoie o canal -> 1. Acesse https://gaming.amazon.com |-| 2. Faca login na sua conta da amazon.com.br |-| 3. Selecione vincular conta da Twitch |-| 4. Faca login na sua conta da Twitch e selecione Confirmar. |-| 5. Volte aqui no canal do Kaduzius, clique em Inscrever-se! - E já fica aqui o meu muito obrigado!!');
   }
-}, 72*60000);
+}, 72 * 60000);
 
 const options = {
   endpoint: '/api/sse',
   script: '/sse.js'
 };
-const {SSE, send, openSessions, openConnections} = sse(options);
+const {
+  SSE,
+  send,
+  openSessions,
+  openConnections
+} = sse(options);
 
 
 
 readdirSync(`${__dirname}/commands`)
   .filter((file) => file.slice(-3) === '.js')
   .forEach((file) => {
-    logs("BOOTLOADER",`Loading module ${file}`, '')
+    logs("BOOTLOADER", `Loading module ${file}`, '')
     require(`./commands/${file}`).default(client, obs, mqtt, messages, commandQueue, ttsQueue, send, cDiscord);
   });
-  logs("BOOTLOADER",`Finished`, '');
+logs("BOOTLOADER", `Finished`, '');
 
 app.use(cors());
 app.use(SSE);

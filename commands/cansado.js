@@ -5,7 +5,7 @@ const logs      = require('./commons/log');
 
 dotenv.config();
 translate.engine = process.env.TRANSLATE_ENGINE;
-translate.key = process.env.GOOGLE_KEY;
+translate.key = process.env.TRANSLATE_KEY;
 const boredAPIURL = "https://www.boredapi.com/api/activity"
 
 //const translated_color = await translate(cp, { from: 'pt', to: 'en' });

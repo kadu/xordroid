@@ -8,6 +8,9 @@ async function createDB() {
   try {
     db = await sqlite.open({ filename: './databases/xordroid.db', driver: sqlite3.Database });
     await db.run(`CREATE TABLE IF NOT EXISTS sh_so ( id INTEGER PRIMARY KEY AUTOINCREMENT, streamer TEXT NOT NULL UNIQUE, added_by TEXT, added_date DATETIME DEFAULT CURRENT_TIMESTAMP, last_showed DATETIME)`);
+    // await db.run(`DROP TABLE sh_so_counter`);
+    await db.run(`CREATE TABLE IF NOT EXISTS sh_so_counter (id INTEGER PRIMARY KEY AUTOINCREMENT,	streamer TEXT NOT NULL UNIQUE, count INT NOT NULL DEFAULT 1);`);
+    console.log('criando tabelas do sh');
   } catch (error) {
     console.error(error);
   }
@@ -60,6 +63,7 @@ exports.default = (client, obs, mqtt, messages) => {
       if(typeof result != 'undefined') {
         if(result.showed !== 1) {
           db.run('UPDATE sh_so SET last_showed=CURRENT_TIMESTAMP WHERE streamer=?',[streamer]);
+          db.run('INSERT OR REPLACE INTO sh_so_counter (id, streamer, count) VALUES ((select id from sh_so_counter where streamer = ?), ?, (select count from sh_so_counter where streamer = ?)+1)',[streamer, streamer, streamer])
           return false;
         }
       }

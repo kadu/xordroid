@@ -6,7 +6,7 @@ const translate = require('translate');
 dotenv.config();
 
 translate.engine = process.env.TRANSLATE_ENGINE;
-translate.key = process.env.GOOGLE_KEY;
+translate.key = process.env.TRANSLATE_KEY;
 
 const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);

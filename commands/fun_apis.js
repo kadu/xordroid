@@ -9,7 +9,7 @@ const dadJokeAPI = "https://icanhazdadjoke.com/"
 
 dotenv.config();
 translate.engine = process.env.TRANSLATE_ENGINE;
-translate.key = process.env.GOOGLE_KEY;
+translate.key = process.env.TRANSLATE_KEY;
 
 exports.default = (client, obs, mqtt, messages) => {
     client.on('message', async (target, context, message, isBot) => {
@@ -28,6 +28,7 @@ exports.default = (client, obs, mqtt, messages) => {
                 );
                 logs.logs('FUN APIS', message, context.username);
                 break;
+            case '!frase':
             case '!quote':
               response = await get(quotesAPI);
               response = JSON.parse(response);
