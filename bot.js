@@ -92,7 +92,7 @@ mqtt.on('connect', function () {
     }
   });
 
-  mqtt.subscribe('homie/ledmatrix/message/state', function (err) {});
+  mqtt.subscribe('homie/ledmatrix/message/state', function (err) { });
 
   mqtt.on('message', function (topic, message) {
     if (topic.toString() == 'homie/ledmatrix/message/state') {
@@ -156,6 +156,11 @@ obs.on("StreamStarted", (data) => {
 obs.on("StreamStopped", (data) => {
   console.log(chalk.bgRedBright.inverse("Stream is OFFLINE"));
   isStreamON = false;
+});
+
+obs.on('error', function (err) {
+  console.error('error!');
+  console.error(e.code);
 });
 
 setInterval(() => {

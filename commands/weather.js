@@ -11,11 +11,23 @@ function sendSSEMessage(send) {
   send(
     'all',
     'newcity', {
-      cool: true,
-      content: 'This is a message sent ' + new Date().toLocaleTimeString()
-    }
+    cool: true,
+    content: 'This is a message sent ' + new Date().toLocaleTimeString()
+  }
   );
 }
+
+function sendSSEMessageData(send, data) {
+  send(
+    'all',
+    'newcity', {
+    cool: true,
+    content: 'This is a message sent ' + new Date().toLocaleTimeString(),
+    data
+  }
+  );
+}
+
 
 async function createDB() {
   try {
@@ -95,6 +107,8 @@ exports.default = (client, obs, mqtt, messages, commandQueue, ttsQueue, send) =>
           logs.logs('Weather', `${city}(${country}) - ${temp}ºC`, context.username);
 
           sendSSEMessage(send);
+          let teste = { lat, lon };
+          sendSSEMessageData(send, teste)
 
         } catch (error) {
           client.say(target, 'Não consegui achar sua cidade, Coloque apenas o nome da cidade, ou nome da cidade virgula pais.(exemplo: dublin, IE)');

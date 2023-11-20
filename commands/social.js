@@ -13,6 +13,10 @@ exports.default = (client, obs, mqtt, messages) => {
         client.say(target, 'http://kaduzi.us/');
         logs.logs('Social', '!eu', context.username);
         break;
+      case '!linkedin':
+        client.say(target, 'https://www.linkedin.com/in/kadubr/');
+        logs.logs('Social', '!linkedin', context.username);
+        break;
 
       case '!youtube':
         client.say(target, 'https://youtube.com/canaldokadu');
@@ -69,5 +73,5 @@ exports.default = (client, obs, mqtt, messages) => {
       default:
         break;
     }
-	});
+  });
 };

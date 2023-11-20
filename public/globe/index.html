@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Globe</title>
+    <script src="/sse.js"></script>
+</head>
+
+<body>
+
+    <canvas id="cobe" style="width: 100%; height: 100%;" width="1000" height="1000"></canvas>
+
+    <div id="stopAnimation">Parar</div>
+    <br>
+    <div id="vaiPara">Vai Para</div>
+    <br>
+    <div id="vaiPara2">Vai Para2</div>
+    <br>
+    <div id="vaiPara3">Vai Para3</div>
+
+    <script type="module">
+        import createGlobe from 'https://cdn.skypack.dev/cobe'
+
+        let parado = false;
+        let gotoLocation = false;
+
+
+        const locationToAngles = (lat, long) => {
+            return [Math.PI - ((long * Math.PI) / 180 - Math.PI / 2), (lat * Math.PI) / 180]
+        }
+
+        const loc1 = { location: [37.7595, -122.4367], size: 0.07 }
+        const loc2 = { location: [-34.60, -58.38], size: 0.07 }
+
+        const zoomScale = 5;
+        let currentPhi = 0
+        let currentTheta = 0
+        let currentScale = 1
+        let currentMarkers = []
+        const doublePi = Math.PI * 2
+        let phi = 0
+        let canvas = document.getElementById("cobe")
+
+        let focusRef = [0, 0]
+        let width = 0
+
+        let zoomOff = false
+
+        const globe = createGlobe(canvas, {
+            devicePixelRatio: 2,
+            width: 1000,
+            height: 1000,
+            phi: 0,
+            theta: 0,
+            dark: 1,
+            diffuse: 1.2,
+            scale: 1,
+            mapSamples: 16000,
+            mapBrightness: 6,
+            baseColor: [1, 1, 1],
+            markerColor: [1, 0.13, 0.18],
+            glowColor: [1, 1, 1],
+            offset: [0, 0],
+            markers: [],
+            onRender: (state) => {
+
+                state.markers = currentMarkers;
+
+                if (gotoLocation) {
+                    phi = currentPhi
+                    state.phi = currentPhi
+                    state.theta = currentTheta
+
+                    const [focusPhi, focusTheta] = focusRef
+                    const distPositive = (focusPhi - currentPhi + doublePi) % doublePi
+                    const distNegative = (currentPhi - focusPhi + doublePi) % doublePi
+                    // Control the speed
+                    if (distPositive < distNegative) {
+                        currentPhi += distPositive * 0.08
+                    } else {
+                        currentPhi -= distNegative * 0.08
+                    }
+
+                    currentTheta = currentTheta * 0.92 + focusTheta * 0.08
+
+                    state.width = width * 2
+                    state.height = width * 2
+                    if (!zoomOff && (currentScale < zoomScale)) currentScale += 0.025
+                    state.scale = currentScale
+
+                    setTimeout(() => {
+                        currentTheta = 0
+                        state.theta = 0
+                        gotoLocation = false
+                        zoomOff = false
+                    }, 4000)
+                } else {
+                    if (currentScale > 1) currentScale -= 0.025
+                    state.phi = phi
+                    state.scale = currentScale
+                }
+
+                if (!parado) {
+                    phi += 0.0025
+                }
+            },
+        });
+
+        const btnParar = document.getElementById("stopAnimation");
+        btnParar.addEventListener('click', () => {
+            parado = !parado
+        })
+
+        const vaiPara = document.getElementById("vaiPara");
+        vaiPara.addEventListener('click', () => {
+            console.log("vai para")
+            currentMarkers.push(loc1)
+            gotoLocation = true
+            focusRef = locationToAngles(37.78, -122.412)
+        })
+
+
+        const vaiPara2 = document.getElementById("vaiPara2");
+        vaiPara2.addEventListener('click', () => {
+            console.log("vai para2")
+            currentMarkers.push(loc2)
+            gotoLocation = true
+            focusRef = locationToAngles(-34.60, -58.38)
+        })
+
+        const vaiPara3 = document.getElementById("vaiPara3");
+        vaiPara3.addEventListener('click', () => {
+            console.log("vai para3")
+            currentMarkers.push(loc2)
+            gotoLocation = true
+            zoomOff = true;
+            focusRef = locationToAngles(0, 0)
+        })
+
+        const sse = new SSE('/api/sse');
+
+        sse.listen('newcity', (data) => {
+            console.log('message', data);
+            if (typeof data.data !== "undefined") {
+                console.log("data.data", data.data)
+
+                let location = { location: [data.data.lat, data.data.lon], size: 0.03 }
+                currentMarkers.push(location)
+                gotoLocation = true
+                focusRef = locationToAngles(data.data.lat, data.data.lon)
+            }
+        });
+
+
+    </script>
+</body>
+
+</html>
